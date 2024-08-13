@@ -7,9 +7,11 @@
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+
 #include "Player.h"
 #include "DebugCamera.h"
 
+#include "Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -51,19 +53,23 @@ private: // メンバ変数
 	/// ゲームシーン用
 	/// </summary>
 	
-	//テクスチャ
-	uint32_t textureHandle_ = 0u;
 
-	//モデル
-	Model* model_ = nullptr;
 
 	//ビューポート
 	ViewProjection viewProjection_;
 
 	//プレイヤー
 	Player* player_ = nullptr;
+	Model* playerModel_ = nullptr;
+	uint32_t textureHandle_ = 0u;
+
 
 	//デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
 	bool isDebugCameraActive_ = false;
+
+	//スカイドーム
+	Skydome* skydome_ = nullptr;
+	Model* skydomeModel_ = nullptr; 
+	uint32_t textureHandleSkydome_ = 0u;
 };

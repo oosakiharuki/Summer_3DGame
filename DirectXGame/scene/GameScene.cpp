@@ -6,8 +6,10 @@
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-	delete model_;
+	delete playerModel_;
 	delete player_;
+	delete skydomeModel_;
+	delete skydome_;
 	delete debugCamera_;
 }
 
@@ -17,13 +19,21 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	model_ = Model::Create();
-	textureHandle_ = TextureManager::Load("uvChecker.png");
+	
 	viewProjection_.Initialize();
 
 	//プレイヤー
+	playerModel_ = Model::Create();
+	textureHandle_ = TextureManager::Load("uvChecker.png");
 	player_ = new Player();
-	player_->Initialize(model_, textureHandle_,&viewProjection_);
+	player_->Initialize(playerModel_, textureHandle_, &viewProjection_);
+
+	//スカイドーム
+	skydomeModel_ = Model::CreateFromOBJ("skydome", true);
+	textureHandleSkydome_ = TextureManager::Load("uvChecker.png");
+	skydome_ = new Skydome();
+	skydome_->Initialize(skydomeModel_, textureHandleSkydome_, &viewProjection_);
+
 
 	//デバッグカメラ
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -37,6 +47,8 @@ void GameScene::Update() {
 	
 	// プレイヤー更新
 	player_->Update();
+
+	skydome_->Update();
 
 #ifdef _DEBUG
 	debugCamera_->Update();
@@ -74,6 +86,10 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
+	skydome_->Draw(viewProjection_);
+	
+	
+	
 	// プレイヤー描画
 	player_->Draw();
 
