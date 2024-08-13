@@ -30,7 +30,7 @@ void GameScene::Initialize() {
 
 	//スカイドーム
 	skydomeModel_ = Model::CreateFromOBJ("skydome", true);
-	textureHandleSkydome_ = TextureManager::Load("uvChecker.png");
+	textureHandleSkydome_ = TextureManager::Load("skydome/skydome.png");
 	skydome_ = new Skydome();
 	skydome_->Initialize(skydomeModel_, textureHandleSkydome_, &viewProjection_);
 
