@@ -4,10 +4,12 @@
 #include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
-#include "Player.h"
 #include "Sprite.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Player.h"
+#include "DebugCamera.h"
+
 
 /// <summary>
 /// ゲームシーン
@@ -48,11 +50,20 @@ private: // メンバ変数
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	
+	//テクスチャ
 	uint32_t textureHandle_ = 0u;
 
+	//モデル
 	Model* model_ = nullptr;
 
+	//ビューポート
 	ViewProjection viewProjection_;
 
+	//プレイヤー
 	Player* player_ = nullptr;
+
+	//デバッグカメラ
+	DebugCamera* debugCamera_ = nullptr;
+	bool isDebugCameraActive_ = false;
 };
