@@ -50,6 +50,28 @@ void GameScene::Update() {
 
 	skydome_->Update();
 
+	if (input_->PushKey(DIK_A)) {
+		viewProjection_.rotation_.y -= 0.02f;
+	}
+	if (input_->PushKey(DIK_D)) {
+		viewProjection_.rotation_.y += 0.02f;
+	}
+	if (input_->PushKey(DIK_W)) {
+		viewProjection_.rotation_.x -= 0.02f;
+	}
+	if (input_->PushKey(DIK_S)) {
+		viewProjection_.rotation_.x += 0.02f;
+	}
+
+	if (input_->PushKey(DIK_K)) {
+		viewProjection_.translation_.y -= 0.2f;
+		viewProjection_.translation_.z -= 0.2f;
+	}
+	if (input_->PushKey(DIK_I)) {
+		viewProjection_.translation_.y += 0.2f;
+		viewProjection_.translation_.z += 0.2f;
+	}
+
 #ifdef _DEBUG
 	debugCamera_->Update();
 
