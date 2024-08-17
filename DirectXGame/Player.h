@@ -21,6 +21,9 @@ public:
 	void Rotate();
 	void Attack();
 
+	Vector3 GetWorldPosition();
+	void OnCollision();
+	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
 
 private:
 	

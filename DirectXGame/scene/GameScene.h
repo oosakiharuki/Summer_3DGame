@@ -11,7 +11,11 @@
 #include "Player.h"
 #include "DebugCamera.h"
 
+#include "Enemy.h"
+
 #include "Skydome.h"
+
+#include <sstream>
 
 /// <summary>
 /// ゲームシーン
@@ -44,6 +48,21 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
+	void EnemyBorn(Vector3 position);
+
+	void CheckAllCollisions();
+
+	//void AddEnemyBullet(EnemyBullet* enemyBullet);
+
+	enum class Phase {
+		Approach,
+		Leave,
+	};
+
+	//void Fire();
+	void LoadEnemyPopData();
+	void UpdateEnemyPopCommands();
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -61,7 +80,19 @@ private: // メンバ変数
 	//プレイヤー
 	Player* player_ = nullptr;
 	Model* playerModel_ = nullptr;
-	uint32_t textureHandle_ = 0u;
+	uint32_t playerTextureHandle_ = 0u;
+
+	//敵
+	//Enemy* enemy_ = nullptr;
+	std::list<Enemy*> enemies_;
+
+	Model* enemyModel_ = nullptr;
+	uint32_t enemyTextureHandle_ = 0u;
+	
+	std::stringstream enemyPopCommands;
+	Vector3 enemyPosition;
+	bool WaitFlag = false;
+	int32_t waitTimer;
 
 
 	//デバッグカメラ
