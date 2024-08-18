@@ -64,14 +64,14 @@ void GameScene::Initialize() {
 
 void GameScene::EnemyBorn(Vector3 position) {
 	// 敵生成
-	for (int32_t i = 0; i < 1; i++) {
+	//for (int32_t i = 0; i < 1; i++) {
 		Enemy* enemy_ = new Enemy();
 		enemy_->Initialize(enemyModel_, enemyTextureHandle_, &viewProjection_, position);
 		enemy_->SetGameScene(this);
 
 		enemy_->SetPlayer(player_);
 		enemies_.push_back(enemy_);
-	}
+	//}
 }
 
 
@@ -163,7 +163,7 @@ void GameScene::CheckAllCollisions() {
 void GameScene::LoadEnemyPopData() {
 
 	std::ifstream file;
-	file.open("Resources/EnemyPop.csv");
+	file.open("Resources/EnemyPop1.csv");
 	assert(file.is_open());
 
 	enemyPopCommands << file.rdbuf();
@@ -251,29 +251,6 @@ void GameScene::Update() {
 	CheckAllCollisions();
 
 
-
-
-	if (input_->PushKey(DIK_A)) {
-		viewProjection_.rotation_.y -= 0.02f;
-	}
-	if (input_->PushKey(DIK_D)) {
-		viewProjection_.rotation_.y += 0.02f;
-	}
-	if (input_->PushKey(DIK_W)) {
-		viewProjection_.rotation_.x -= 0.02f;
-	}
-	if (input_->PushKey(DIK_S)) {
-		viewProjection_.rotation_.x += 0.02f;
-	}
-
-	if (input_->PushKey(DIK_K)) {
-		viewProjection_.translation_.y -= 0.2f;
-		viewProjection_.translation_.z -= 0.2f;
-	}
-	if (input_->PushKey(DIK_I)) {
-		viewProjection_.translation_.y += 0.2f;
-		viewProjection_.translation_.z += 0.2f;
-	}
 
 #ifdef _DEBUG
 	debugCamera_->Update();
