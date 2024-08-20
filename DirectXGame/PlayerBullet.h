@@ -15,6 +15,8 @@ public:
 	void OnCollision();
 	Vector3 GetWorldPosition();
 
+	//void SetParent(const WorldTransform* parent);
+
 private:
 	WorldTransform worldTransform_;
 	Model* model_ = nullptr;

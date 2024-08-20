@@ -9,11 +9,11 @@
 #include "WorldTransform.h"
 
 #include "Player.h"
-#include "DebugCamera.h"
-
 #include "Enemy.h"
-
 #include "Skydome.h"
+#include "RailCamera.h"
+
+#include "DebugCamera.h"
 
 #include <sstream>
 
@@ -63,6 +63,8 @@ public: // メンバ関数
 	void LoadEnemyPopData();
 	void UpdateEnemyPopCommands();
 
+	//void SetPerant(const WorldTransform* parent);
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -103,4 +105,7 @@ private: // メンバ変数
 	Skydome* skydome_ = nullptr;
 	Model* skydomeModel_ = nullptr; 
 	uint32_t textureHandleSkydome_ = 0u;
+
+	// レールカメラ
+	RailCamera* railCamera_ = nullptr;
 };

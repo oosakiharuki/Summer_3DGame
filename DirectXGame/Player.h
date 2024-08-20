@@ -10,20 +10,29 @@
 
 #include <list>
 
+class RailCamera;
+
 class Player {
 public:
 	
 	~Player();
 	void Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection);
+	
 	void Update();
+	
 	void Draw();
 
-	void Rotate();
+	void Rotate();	
 	void Attack();
 
 	Vector3 GetWorldPosition();
+	
 	void OnCollision();
 	const std::list<PlayerBullet*>& GetBullets() const { return bullets_; }
+
+	//void SetParent(const WorldTransform* parent);
+
+	const WorldTransform& GetWorldTransfrom() const { return worldTransform_; }
 
 private:
 	
@@ -33,7 +42,7 @@ private:
 
 	WorldTransform worldTransform_;
 
-	ViewProjection* viewProjection_ = nullptr;
+	const ViewProjection* viewProjection_ = nullptr;
 
 	Input* input_ = nullptr;
 
@@ -43,4 +52,5 @@ private:
 
 	std::list<PlayerBullet*> bullets_;
 
+	RailCamera* railCamera_ = nullptr;
 };

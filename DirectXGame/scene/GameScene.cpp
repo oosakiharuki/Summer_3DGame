@@ -17,6 +17,9 @@ GameScene::~GameScene() {
 
 	delete skydomeModel_;
 	delete skydome_;
+
+	delete railCamera_;
+
 	delete debugCamera_;
 }
 
@@ -29,12 +32,21 @@ void GameScene::Initialize() {
 	
 	viewProjection_.Initialize();
 
+	// レールカメラ
+	railCamera_ = new RailCamera();
+	railCamera_->Initialize();
+
 	//プレイヤー
 	playerModel_ = Model::Create();
 	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
 	
 	player_ = new Player();
+	//player_->SetParent(&railCamera_->GetWorldTransform());
+
 	player_->Initialize(playerModel_, playerTextureHandle_, &viewProjection_);
+
+
+	railCamera_->SetTarget(&player_->GetWorldTransfrom());
 
 
 	//敵
@@ -221,6 +233,11 @@ void GameScene::UpdateEnemyPopCommands() {
 	}
 }
 
+//void GameScene::SetPerant(const WorldTransform* parent) {
+//
+//
+//
+//}
 
 
 void GameScene::Update() { 
@@ -235,6 +252,10 @@ void GameScene::Update() {
 		enemy_->Update();
 	}
 	skydome_->Update();
+	
+	railCamera_->Update();
+	viewProjection_.translation_ = railCamera_->GetWorldTranslation();
+	viewProjection_.rotation_ = railCamera_->GetWorldRotate();
 
 
 	// Bullet Dead Timer
@@ -255,7 +276,7 @@ void GameScene::Update() {
 #ifdef _DEBUG
 	debugCamera_->Update();
 
-	if (input_->TriggerKey(DIK_0)) {
+	if (input_->TriggerKey(DIK_F5)) {
 		isDebugCameraActive_ = true;
 	}
 #endif

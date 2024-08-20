@@ -1,6 +1,6 @@
 #include "Player.h"
-#include "cassert"
-
+#include <cassert>
+#include "RailCamera.h"
 
 Player::~Player() {
 	for (PlayerBullet* bullet_ : bullets_) {
@@ -25,9 +25,10 @@ void Player::Rotate() {
 	const float kRotSpeed = 0.02f;
 
 	// Bectol henkou
-	if (input_->PushKey(DIK_A)) {
+	if (input_->PushKey(DIK_2)) {
 		worldTransform_.rotation_.y -= kRotSpeed;
-	} else if (input_->PushKey(DIK_D)) {
+	} 
+	else if (input_->PushKey(DIK_1)) {
 		worldTransform_.rotation_.y += kRotSpeed;
 	}
 }
@@ -44,6 +45,8 @@ void Player::Attack() {
 
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+
+		//newBullet->SetParent(&railCamera->GetWorldTransform());
 
 		bullets_.push_back(newBullet);
 	}
@@ -62,6 +65,10 @@ Vector3 Player::GetWorldPosition() {
 void Player::OnCollision() {
 
 }
+
+//void Player::SetParent(const WorldTransform* parent) { 
+//	worldTransform_.parent_ = parent; 
+//}
 
 void Player::Update() {
 	worldTransform_.TransferMatrix();

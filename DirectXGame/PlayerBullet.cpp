@@ -29,6 +29,10 @@ Vector3 PlayerBullet::GetWorldPosition() {
 	return worldPos;
 }
 
+//void PlayerBullet::SetParent(const WorldTransform* parent) { 
+//	worldTransform_.parent_ = parent;
+//}
+
 void PlayerBullet::Update() {
 	worldTransform_.UpdateMatrix();
 
