@@ -32,6 +32,7 @@ void GameScene::Initialize() {
 	
 	phase_ = Phase::kPlay;
 	isFinish = false;
+	isBornFinish = false;
 
 	viewProjection_.Initialize();
 
@@ -178,7 +179,7 @@ void GameScene::CheckAllCollisions() {
 void GameScene::LoadEnemyPopData() {
 
 	std::ifstream file;
-	file.open("Resources/EnemyPop1.csv");
+	file.open("Resources/EnemyPop2.csv");
 	assert(file.is_open());
 
 	enemyPopCommands << file.rdbuf();
@@ -187,51 +188,56 @@ void GameScene::LoadEnemyPopData() {
 }
 
 void GameScene::UpdateEnemyPopCommands() {
+	if (!isBornFinish) {
 
-	// if A
-	if (WaitFlag) {
-		waitTimer--;
-		if (waitTimer <= 0) {
-			WaitFlag = false;
-		}
-		return;
-	}
-
-	std::string line;
-
-	while (getline(enemyPopCommands, line)) {
-
-		std::istringstream line_stream(line);
-
-		std::string word;
-
-		getline(line_stream, word, ',');
-
-		if (word.find("//") == 0) {
-			continue;
+		// if A
+		if (WaitFlag) {
+			waitTimer--;
+			if (waitTimer <= 0) {
+				WaitFlag = false;
+			}
+			return;
 		}
 
-		if (word.find("POP") == 0) {
-			getline(line_stream, word, ',');
-			float x = (float)std::atof(word.c_str());
+		std::string line;
+
+		while (getline(enemyPopCommands, line)) {
+
+			std::istringstream line_stream(line);
+
+			std::string word;
 
 			getline(line_stream, word, ',');
-			float y = (float)std::atof(word.c_str());
 
-			getline(line_stream, word, ',');
-			float z = (float)std::atof(word.c_str());
+			if (word.find("//") == 0) {
+				continue;
+			}
 
-			EnemyBorn(Vector3(x, y, z));
+			if (word.find("POP") == 0) {
+				getline(line_stream, word, ',');
+				float x = (float)std::atof(word.c_str());
 
-		} else if (word.find("WAIT") == 0) {
-			getline(line_stream, word, ',');
+				getline(line_stream, word, ',');
+				float y = (float)std::atof(word.c_str());
 
-			int32_t waitTime = atoi(word.c_str());
+				getline(line_stream, word, ',');
+				float z = (float)std::atof(word.c_str());
 
-			WaitFlag = true;
-			waitTimer = waitTime;
+				EnemyBorn(Vector3(x, y, z));
 
-			break; // 待機時間にif Aを使うため一度while文から抜ける
+			} else if (word.find("WAIT") == 0) {
+				getline(line_stream, word, ',');
+
+				int32_t waitTime = atoi(word.c_str());
+
+				WaitFlag = true;
+				waitTimer = waitTime;
+
+				break; // 待機時間にif Aを使うため一度while文から抜ける
+			} else if (word.find("FINISH") == 0) {
+				isBornFinish = true;
+				break;
+			}
 		}
 	}
 }
@@ -285,7 +291,7 @@ void GameScene::Update() {
 #endif
 
 		if (player_->IsDead()) {
-			phase_ = Phase::kDeath;
+			phase_ = Phase::kDeath; //プレイヤーが倒されたとき
 			isFinish = true;
 		}
 
@@ -304,13 +310,23 @@ void GameScene::Update() {
 			if (enemy->IsDead()) {
 
 				delete enemy;
+				enemy = nullptr;
 				return true;
 			}
 			return false;
-		}); // 当たり判定
+		}); 
+		// 当たり判定
 		CheckAllCollisions();
 		break;
 	}
+	
+
+	if (isBornFinish && enemies_.empty()) {
+		isFinish = true; //全て倒した時
+	}
+
+
+
 }
 
 void GameScene::Draw() {

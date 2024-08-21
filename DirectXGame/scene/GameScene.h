@@ -97,7 +97,7 @@ private: // メンバ変数
 	Vector3 enemyPosition;
 	bool WaitFlag = false;
 	int32_t waitTimer;
-
+	bool isBornFinish = false;
 
 	//デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
