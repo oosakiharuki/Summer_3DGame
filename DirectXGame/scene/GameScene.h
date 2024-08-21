@@ -65,7 +65,8 @@ public: // メンバ関数
 
 	//void SetPerant(const WorldTransform* parent);
 
-	bool IsGameFinish() const { return isFinish; }
+	bool IsFinishDead() const { return isFinishDead; }
+	bool IsFinishClear() const { return isFinishClear; }
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -114,5 +115,6 @@ private: // メンバ変数
 
 	//シーン
 	Phase phase_;
-	bool isFinish = false;
+	bool isFinishDead = false;
+	bool isFinishClear = false;
 };

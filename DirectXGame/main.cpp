@@ -7,21 +7,25 @@
 #include "TextureManager.h"
 #include "WinApp.h"
 #include "TitleScene.h"
+#include "GameOverScene.h"
+#include "GameClearScene.h"
 
 enum class Scene { 
 	kUnkown = 0,
 
 	kTitle,
 	kGame,
-	//kClear,　GameSceneでできそう
-	//kGameOver,
+	kClear, //GameSceneでできそう
+	kGameOver,
 
 };
 
 GameScene* gameScene = nullptr;
 TitleScene* titleScene = nullptr;
+GameOverScene* gameOverScene = nullptr;
+GameClearScene* gameClearScene = nullptr;
 
-Scene scene = Scene::kUnkown;
+Scene scene = Scene::kTitle;
 
 
 void ChangeScene() {
@@ -39,11 +43,46 @@ void ChangeScene() {
 		break;
 	case Scene::kGame:
 
-		if (gameScene->IsGameFinish()) {
-			scene = Scene::kTitle;
+		if (gameScene->IsFinishDead()) {
+			scene = Scene::kGameOver;
 
 			delete gameScene;
 			gameScene = nullptr;
+
+			gameOverScene = new GameOverScene();
+			gameOverScene->Initialize();
+		}
+		else if (gameScene->IsFinishClear()) {
+			scene = Scene::kClear;
+
+			delete gameScene;
+			gameScene = nullptr;
+
+			gameClearScene = new GameClearScene();
+			gameClearScene->Initialize();
+		}
+
+		break;
+	case Scene::kGameOver:
+
+		if (gameOverScene->IsFinished()) {
+			scene = Scene::kTitle;
+
+			delete gameOverScene;
+			gameOverScene = nullptr;
+
+			titleScene = new TitleScene();
+			titleScene->Initialize();
+		}
+
+		break;
+	case Scene::kClear:
+
+		if (gameClearScene->IsFinished()) {
+			scene = Scene::kTitle;
+
+			delete gameClearScene;
+			gameClearScene = nullptr;
 
 			titleScene = new TitleScene();
 			titleScene->Initialize();
@@ -61,6 +100,12 @@ void UpdataScene() {
 	case Scene::kGame:
 		gameScene->Update();
 		break;
+	case Scene::kGameOver:
+		gameOverScene->Updata();
+		break;
+	case Scene::kClear:
+		gameClearScene->Updata();
+		break;
 	}
 }
 
@@ -71,6 +116,12 @@ void DrawScene() {
 		break;
 	case Scene::kGame:
 		gameScene->Draw();
+		break;
+	case Scene::kGameOver:
+		gameOverScene->Draw();
+		break;
+	case Scene::kClear:
+		gameClearScene->Updata();
 		break;
 	}
 }

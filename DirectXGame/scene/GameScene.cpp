@@ -31,7 +31,8 @@ void GameScene::Initialize() {
 
 	
 	phase_ = Phase::kPlay;
-	isFinish = false;
+	isFinishDead = false;
+	isFinishClear = false;
 	isBornFinish = false;
 
 	viewProjection_.Initialize();
@@ -292,37 +293,37 @@ void GameScene::Update() {
 
 		if (player_->IsDead()) {
 			phase_ = Phase::kDeath; //プレイヤーが倒されたとき
-			isFinish = true;
+			isFinishDead = true;
 		}
 
 
 		break;
 	case Phase::kDeath:
 
-		skydome_->Update();
+		//skydome_->Update();
 
-		for (Enemy* enemy_ : enemies_) {
-			enemy_->Update();
-		}
+		//for (Enemy* enemy_ : enemies_) {
+		//	enemy_->Update();
+		//}
 	
-		// Enemy Dead Timer
-		enemies_.remove_if([](Enemy* enemy) {
-			if (enemy->IsDead()) {
+		//// Enemy Dead Timer
+		//enemies_.remove_if([](Enemy* enemy) {
+		//	if (enemy->IsDead()) {
 
-				delete enemy;
-				enemy = nullptr;
-				return true;
-			}
-			return false;
-		}); 
-		// 当たり判定
-		CheckAllCollisions();
+		//		delete enemy;
+		//		enemy = nullptr;
+		//		return true;
+		//	}
+		//	return false;
+		//}); 
+		//// 当たり判定
+		//CheckAllCollisions();
 		break;
 	}
 	
 
 	if (isBornFinish && enemies_.empty()) {
-		isFinish = true; //全て倒した時
+		isFinishClear = true; //全て倒した時
 	}
 
 
