@@ -70,6 +70,13 @@ void Player::OnCollision() {
 //	worldTransform_.parent_ = parent; 
 //}
 
+void Player::Damage() { 
+	Hp--;
+	if (Hp == 0) {
+		isDead_ = true;
+	}
+}
+
 void Player::Update() {
 	worldTransform_.TransferMatrix();
 

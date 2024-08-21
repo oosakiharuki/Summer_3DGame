@@ -55,8 +55,8 @@ public: // メンバ関数
 	//void AddEnemyBullet(EnemyBullet* enemyBullet);
 
 	enum class Phase {
-		Approach,
-		Leave,
+		kPlay,
+		kDeath,
 	};
 
 	//void Fire();
@@ -64,6 +64,8 @@ public: // メンバ関数
 	void UpdateEnemyPopCommands();
 
 	//void SetPerant(const WorldTransform* parent);
+
+	bool IsGameFinish() const { return isFinish; }
 
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
@@ -108,4 +110,9 @@ private: // メンバ変数
 
 	// レールカメラ
 	RailCamera* railCamera_ = nullptr;
+
+
+	//シーン
+	Phase phase_;
+	bool isFinish = false;
 };

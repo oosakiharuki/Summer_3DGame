@@ -23,7 +23,7 @@ public:
 	Vector3 GetWorldPosition();
 
 	void OnCollision();
-
+	void OnStartFight();
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 
 
@@ -45,7 +45,12 @@ private:
 
 	Phase phace_ = Phase::move;
 
-	float fightTimer_ = 3.0f;
+
+
+	float coolTimer_ = 2.0f;
+	float attackTime = 1.0f;
+	bool firstAttack = true;
+
 	const float kBulletSpeed = 0.1f;
 
 	bool isDead_ = false;

@@ -30,6 +30,9 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 
 	
+	phase_ = Phase::kPlay;
+	isFinish = false;
+
 	viewProjection_.Initialize();
 
 	// レールカメラ
@@ -159,12 +162,12 @@ void GameScene::CheckAllCollisions() {
 
 		float L;
 
-		L = (plaeyrRadius + EnemyRadius) * (plaeyrRadius + EnemyRadius);
+		L = ((plaeyrRadius + 5.0f) + EnemyRadius) * ((plaeyrRadius + 5.0f) + EnemyRadius);
 
 		if (distance.x + distance.y + distance.z <= L) {
 
 			player_->OnCollision();
-			enemy->OnCollision(); // ここ　phaceで攻撃に変える
+			enemy->OnStartFight(); // ここ　phaceで攻撃に変える
 		}
 	}
 	
@@ -240,46 +243,74 @@ void GameScene::UpdateEnemyPopCommands() {
 //}
 
 
-void GameScene::Update() { 
-	
-	// プレイヤー更新
-	player_->Update();
+void GameScene::Update() {
 
-	LoadEnemyPopData();
-	UpdateEnemyPopCommands();
+	switch (phase_) {
+	case Phase::kPlay:
 
-	for (Enemy* enemy_ : enemies_) {
-		enemy_->Update();
-	}
-	skydome_->Update();
-	
-	railCamera_->Update();
-	viewProjection_.translation_ = railCamera_->GetWorldTranslation();
-	viewProjection_.rotation_ = railCamera_->GetWorldRotate();
+		// プレイヤー更新
+		player_->Update();
 
+		LoadEnemyPopData();
+		UpdateEnemyPopCommands();
 
-	// Bullet Dead Timer
-	enemies_.remove_if([](Enemy* enemy) {
-		if (enemy->IsDead()) {
-
-			delete enemy;
-			return true;
+		for (Enemy* enemy_ : enemies_) {
+			enemy_->Update();
 		}
-		return false;
-	});
+		skydome_->Update();
 
-	//当たり判定
-	CheckAllCollisions();
+		railCamera_->Update();
+		viewProjection_.translation_ = railCamera_->GetWorldTranslation();
+		viewProjection_.rotation_ = railCamera_->GetWorldRotate();
 
+		// Bullet Dead Timer
+		enemies_.remove_if([](Enemy* enemy) {
+			if (enemy->IsDead()) {
 
+				delete enemy;
+				return true;
+			}
+			return false;
+		});
+
+		// 当たり判定
+		CheckAllCollisions();
 
 #ifdef _DEBUG
-	debugCamera_->Update();
+		debugCamera_->Update();
 
-	if (input_->TriggerKey(DIK_F5)) {
-		isDebugCameraActive_ = true;
-	}
+		if (input_->TriggerKey(DIK_F5)) {
+			isDebugCameraActive_ = true;
+		}
 #endif
+
+		if (player_->IsDead()) {
+			phase_ = Phase::kDeath;
+			isFinish = true;
+		}
+
+
+		break;
+	case Phase::kDeath:
+
+		skydome_->Update();
+
+		for (Enemy* enemy_ : enemies_) {
+			enemy_->Update();
+		}
+	
+		// Enemy Dead Timer
+		enemies_.remove_if([](Enemy* enemy) {
+			if (enemy->IsDead()) {
+
+				delete enemy;
+				return true;
+			}
+			return false;
+		}); // 当たり判定
+		CheckAllCollisions();
+		break;
+	}
 }
 
 void GameScene::Draw() {
@@ -309,22 +340,42 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	skydome_->Draw(viewProjection_);
+	switch (phase_) {
+	case Phase::kPlay:
 
-	for (Enemy* enemy_ : enemies_) {
-		enemy_->Draw();
-	}
+		skydome_->Draw(viewProjection_);
 
-	// プレイヤー描画
-	player_->Draw();
+		for (Enemy* enemy_ : enemies_) {
+			enemy_->Draw();
+		}
 
-	if (isDebugCameraActive_ == true) {
-		viewProjection_.matView = debugCamera_->GetViewProjection().matView;
-		viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
-		viewProjection_.TransferMatrix();
-	} else {
+		// プレイヤー描画
+		player_->Draw();
+
+		if (isDebugCameraActive_ == true) {
+			viewProjection_.matView = debugCamera_->GetViewProjection().matView;
+			viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
+			viewProjection_.TransferMatrix();
+		} else {
+			viewProjection_.UpdateMatrix();
+		}
+
+		break;
+	case Phase::kDeath:
+		skydome_->Draw(viewProjection_);
+
+		// プレイヤー描画
+		//player_->Draw();
+
+		for (Enemy* enemy_ : enemies_) {
+			enemy_->Draw();
+		}
+
 		viewProjection_.UpdateMatrix();
+
+		break;
 	}
+
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

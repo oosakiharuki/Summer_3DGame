@@ -31,35 +31,32 @@ void Enemy::OnCollision() {
 	isDead_ = true; 
 }
 
+void Enemy::OnStartFight() {
+	phace_ = Phase::Fight;
+}
+
 void Enemy::Update() {
+	
+	worldTransform_.TransferMatrix();
+	worldTransform_.UpdateMatrix();
+	
+	Vector3 playerPostion = player_->GetWorldPosition();
+	Vector3 enemyPostion = GetWorldPosition();
+
+	Vector3 subtract = myMath_->Subtract(playerPostion, enemyPostion);
+
+	Vector3 normalize = myMath_->Normalize(subtract);
+
+	normalize.x *= kBulletSpeed;
+	normalize.y *= kBulletSpeed;
+	normalize.z *= kBulletSpeed;
+
+	Vector3 velocity(normalize);
 
 	switch (phace_) {
 	case Phase::move:
 
-		worldTransform_.TransferMatrix();
-
-		//const float kSpeed_ = 0.2f;
-
-		worldTransform_.UpdateMatrix();
-
-		//worldTransform_.translation_.z -= kSpeed_;
-
-
 		assert(player_);
-
-
-		Vector3 playerPostion = player_->GetWorldPosition();
-		Vector3 enemyPostion = GetWorldPosition();
-
-		Vector3 subtract = myMath_->Subtract(playerPostion, enemyPostion);
-
-		Vector3 normalize = myMath_->Normalize(subtract);
-
-		normalize.x *= kBulletSpeed;
-		normalize.y *= kBulletSpeed;
-		normalize.z *= kBulletSpeed;
-
-		Vector3 velocity(normalize);
 
 		velocity = myMath_->TransformNormal(velocity, worldTransform_.matWorld_);
 
@@ -75,8 +72,40 @@ void Enemy::Update() {
 
 		break;
 	case Phase::Fight:
-		fightTimer_ -= 0.5f;
 
+		if (coolTimer_ <= 0) {
+		
+			attackTime -= 1.0f / 60.0f;
+
+			Vector3 AttackVlocity = {0.0f,0.4f,0.0f};
+
+
+			worldTransform_.translation_.x += velocity.x * 2;
+			worldTransform_.translation_.y += velocity.y * 2;
+			worldTransform_.translation_.z += velocity.z * 2;
+
+			worldTransform_.rotation_.y += AttackVlocity.y;
+
+			if (attackTime <= 0.0f)
+			{
+				coolTimer_ = 2.0f;
+				attackTime = 1.0f;
+				//firstAttack = false;
+				player_->Damage();
+			}
+
+		} else {
+
+			coolTimer_ -= 1.0f / 60.0f;
+
+			worldTransform_.rotation_.y -= 0.1f;
+			//if (!firstAttack) {
+
+				worldTransform_.translation_.x -= velocity.x;
+				worldTransform_.translation_.y -= velocity.y;
+				worldTransform_.translation_.z -= velocity.z;
+			//}
+		}
 
 		break;
 	}

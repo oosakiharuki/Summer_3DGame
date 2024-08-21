@@ -34,6 +34,9 @@ public:
 
 	const WorldTransform& GetWorldTransfrom() const { return worldTransform_; }
 
+	void Damage();
+	bool IsDead() const { return isDead_; }
+
 private:
 	
 	uint32_t textureHandle_ = 0u;
@@ -53,4 +56,7 @@ private:
 	std::list<PlayerBullet*> bullets_;
 
 	RailCamera* railCamera_ = nullptr;
+
+	uint32_t Hp = 3;
+	bool isDead_ = false;
 };
