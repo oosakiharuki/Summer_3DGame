@@ -46,7 +46,7 @@ private:
 	Phase phace_ = Phase::move;
 
 	float fightTimer_ = 3.0f;
-	const float kBulletSpeed = 0.2f;
+	const float kBulletSpeed = 0.1f;
 
 	bool isDead_ = false;
 };

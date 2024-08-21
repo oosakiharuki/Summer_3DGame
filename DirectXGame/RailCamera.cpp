@@ -15,12 +15,12 @@ void RailCamera::Initialize() {
 	//worldTramsform_.translation_.y = Translation.y;
 	//worldTramsform_.translation_.z = Translation.z;
 
-	//Vector3 Rotate = {0.3f, 0.0f, 0.0f};
+	Vector3 Rotate = {0.3f, 0.0f, 0.0f};
 	////Vector3 Rotate = {0.0f, 0.0f, 0.0f};
 
-	//worldTramsform_.rotation_.x = Rotate.x;
-	//worldTramsform_.rotation_.y = Rotate.y;
-	//worldTramsform_.rotation_.z = Rotate.z;
+	viewProjection_.rotation_.x = Rotate.x;
+	viewProjection_.rotation_.y = Rotate.y;
+	viewProjection_.rotation_.z = Rotate.z;
 
 	viewProjection_.Initialize();
 
@@ -63,7 +63,7 @@ void RailCamera::Update() {
 
 	if (target_) {
 
-		Vector3 offset = {0.0f, 4.0f, -30.0f};
+		Vector3 offset = {0.0f, 14.0f, -40.0f};
 
 		Matrix4x4 rotate = target_->matWorld_;
 

@@ -37,7 +37,7 @@ void GameScene::Initialize() {
 	railCamera_->Initialize();
 
 	//プレイヤー
-	playerModel_ = Model::Create();
+	playerModel_ = Model::CreateFromOBJ("player",true);
 	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
 	
 	player_ = new Player();
