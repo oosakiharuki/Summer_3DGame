@@ -14,7 +14,8 @@ public:
 		Fight,
 	};
 
-	void Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection,Vector3 position);
+	void Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection, Vector3 position,float direction);
+
 	void Update();
 	void Draw();
 
@@ -51,7 +52,7 @@ private:
 	float attackTime = 1.0f;
 	bool firstAttack = true;
 
-	const float kBulletSpeed = 0.1f;
+	const float kBulletSpeed = 0.15f;
 
 	bool isDead_ = false;
 };

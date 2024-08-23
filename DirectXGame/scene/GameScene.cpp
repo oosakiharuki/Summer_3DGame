@@ -55,8 +55,8 @@ void GameScene::Initialize() {
 
 
 	//敵
-	enemyModel_ = Model::Create();
-	enemyTextureHandle_ = TextureManager::Load("uvChecker.png");
+	enemyModel_ = Model::CreateFromOBJ("enemy",true);
+	enemyTextureHandle_ = TextureManager::Load("enemy/enemy.png");
 
 	//for (uint32_t i; i < 1; i++) {
 	//	enemy_ = new Enemy();
@@ -79,16 +79,14 @@ void GameScene::Initialize() {
 #endif
 }
 
-void GameScene::EnemyBorn(Vector3 position) {
+void GameScene::EnemyBorn(Vector3 position, float direction) {
 	// 敵生成
-	//for (int32_t i = 0; i < 1; i++) {
-		Enemy* enemy_ = new Enemy();
-		enemy_->Initialize(enemyModel_, enemyTextureHandle_, &viewProjection_, position);
-		enemy_->SetGameScene(this);
+	Enemy* enemy_ = new Enemy();
+	enemy_->Initialize(enemyModel_, enemyTextureHandle_, &viewProjection_, position, direction);
+	enemy_->SetGameScene(this);
 
-		enemy_->SetPlayer(player_);
-		enemies_.push_back(enemy_);
-	//}
+	enemy_->SetPlayer(player_);
+	enemies_.push_back(enemy_);
 }
 
 
@@ -224,7 +222,10 @@ void GameScene::UpdateEnemyPopCommands() {
 				getline(line_stream, word, ',');
 				float z = (float)std::atof(word.c_str());
 
-				EnemyBorn(Vector3(x, y, z));
+				getline(line_stream, word, ',');
+				float direction = (float)std::atof(word.c_str());//向き
+
+				EnemyBorn(Vector3(x, y, z),direction);
 
 			} else if (word.find("WAIT") == 0) {
 				getline(line_stream, word, ',');

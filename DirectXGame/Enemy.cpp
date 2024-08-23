@@ -1,9 +1,10 @@
 #include "Enemy.h"
 #include <cassert>
+#include <numbers>
 
 #include "Player.h"
 
-void Enemy::Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection, Vector3 position) {
+void Enemy::Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection, Vector3 position, float direction) {
 	
 	assert(model);
 
@@ -12,6 +13,10 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, ViewProjection* vie
 
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
+	
+	if (direction != 0.0f) {
+		worldTransform_.rotation_.y += std::numbers::pi_v<float> / direction;
+	}
 
 	viewProjection_ = viewProjection;
 
@@ -58,7 +63,7 @@ void Enemy::Update() {
 
 		assert(player_);
 
-		velocity = myMath_->TransformNormal(velocity, worldTransform_.matWorld_);
+		//velocity = myMath_->TransformNormal(velocity, worldTransform_.matWorld_);
 
 		worldTransform_.translation_.x += velocity.x;
 		worldTransform_.translation_.y += velocity.y;

@@ -52,8 +52,10 @@ private:
 	MyMath* myMath_ = nullptr;
 
 	 //PlayerBullet* bullet_ = nullptr;
+	Model* modelBullet_ = nullptr;
 
 	std::list<PlayerBullet*> bullets_;
+	Vector3 bulletDirection;
 
 	RailCamera* railCamera_ = nullptr;
 

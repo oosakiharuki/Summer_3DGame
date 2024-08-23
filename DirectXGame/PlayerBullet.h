@@ -12,6 +12,8 @@ public:
 
 	bool IsDead() const { return isDead_; }
 
+	void Rotate(const Vector3& direction);
+
 	void OnCollision();
 	Vector3 GetWorldPosition();
 

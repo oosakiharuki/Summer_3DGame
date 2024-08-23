@@ -8,7 +8,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 
 	model_ = model;
 
-	textureHandle_ = TextureManager::Load("white1x1.png");
+	textureHandle_ = TextureManager::Load("bullet/bullet.png");
 	worldTransform_.Initialize();
 
 	worldTransform_.translation_ = position;
@@ -17,6 +17,10 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 
 void PlayerBullet::OnCollision() {
 	isDead_ = true;
+}
+
+void PlayerBullet::Rotate(const Vector3& direction) { 
+	worldTransform_.rotation_.y = direction.y;
 }
 
 Vector3 PlayerBullet::GetWorldPosition() {

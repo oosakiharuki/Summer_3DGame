@@ -48,7 +48,7 @@ public: // メンバ関数
 	/// </summary>
 	void Draw();
 
-	void EnemyBorn(Vector3 position);
+	void EnemyBorn(Vector3 position, float direction);
 
 	void CheckAllCollisions();
 

@@ -18,6 +18,10 @@ void Player::Initialize(Model* model, uint32_t textureHandle, ViewProjection* vi
 
 	viewProjection_ = viewProjection;
 	input_ = Input::GetInstance();
+
+
+	modelBullet_ = Model::CreateFromOBJ("bullet", true);
+	bulletDirection = {0, 0, 0};
 }
 
 void Player::Rotate() {
@@ -27,15 +31,17 @@ void Player::Rotate() {
 	// Bectol henkou
 	if (input_->PushKey(DIK_A)) {
 		worldTransform_.rotation_.y -= kRotSpeed;
+		bulletDirection.y -= kRotSpeed;
 	} 
 	else if (input_->PushKey(DIK_D)) {
 		worldTransform_.rotation_.y += kRotSpeed;
+		bulletDirection.y += kRotSpeed;
 	}
 }
 
 //bullet
 void Player::Attack() {
-
+	
 	if (input_->TriggerKey(DIK_SPACE)) {
 
 		const float kBulletSpeed = 1.0f;
@@ -44,10 +50,11 @@ void Player::Attack() {
 		velocity = myMath_->TransformNormal(velocity, worldTransform_.matWorld_);
 
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, worldTransform_.translation_, velocity);
+		newBullet->Initialize(modelBullet_, worldTransform_.translation_, velocity);
 
 		//newBullet->SetParent(&railCamera->GetWorldTransform());
-
+	
+		newBullet->Rotate(bulletDirection);
 		bullets_.push_back(newBullet);
 	}
 }
