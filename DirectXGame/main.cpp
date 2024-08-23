@@ -121,7 +121,7 @@ void DrawScene() {
 		gameOverScene->Draw();
 		break;
 	case Scene::kClear:
-		gameClearScene->Updata();
+		gameClearScene->Draw();
 		break;
 	}
 }

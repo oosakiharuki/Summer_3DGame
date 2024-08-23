@@ -7,7 +7,7 @@ void GameOverScene::Initialize() {
 	assert(modelTitle_);
 
 	// textureHandle_ = TextureManager::Load("Title/Title.png");
-	modelTitle_ = Model::CreateFromOBJ("player", true);
+	modelTitle_ = Model::CreateFromOBJ("GameOver", true);
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
 }
