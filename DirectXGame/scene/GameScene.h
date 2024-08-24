@@ -12,6 +12,7 @@
 #include "Enemy.h"
 #include "Skydome.h"
 #include "RailCamera.h"
+#include "Ground.h"
 
 #include "DebugCamera.h"
 
@@ -112,6 +113,10 @@ private: // メンバ変数
 	// レールカメラ
 	RailCamera* railCamera_ = nullptr;
 
+	//地面
+	Model* groundModel_ = nullptr;
+	Ground* ground_ = nullptr;
+	uint32_t groundTextureHandle_ = 0u;
 
 	//シーン
 	Phase phase_;

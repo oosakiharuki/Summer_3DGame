@@ -70,6 +70,12 @@ void GameScene::Initialize() {
 	skydome_ = new Skydome();
 	skydome_->Initialize(skydomeModel_, textureHandleSkydome_, &viewProjection_);
 
+	//地面
+	groundModel_ = Model::CreateFromOBJ("ground", true);
+	groundTextureHandle_ = TextureManager::Load("ground/ground.png");
+	ground_ = new Ground();
+	ground_->Initialize(groundModel_, groundTextureHandle_, &viewProjection_);
+
 
 	//デバッグカメラ
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -266,7 +272,7 @@ void GameScene::Update() {
 			enemy_->Update();
 		}
 		skydome_->Update();
-
+		ground_->Update();
 		railCamera_->Update();
 		viewProjection_.translation_ = railCamera_->GetWorldTranslation();
 		viewProjection_.rotation_ = railCamera_->GetWorldRotate();
@@ -378,6 +384,8 @@ void GameScene::Draw() {
 			viewProjection_.UpdateMatrix();
 		}
 
+		ground_->Draw();
+
 		break;
 	case Phase::kDeath:
 		skydome_->Draw(viewProjection_);
@@ -390,6 +398,8 @@ void GameScene::Draw() {
 		}
 
 		viewProjection_.UpdateMatrix();
+
+		ground_->Draw();
 
 		break;
 	}

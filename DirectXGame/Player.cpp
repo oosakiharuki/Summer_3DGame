@@ -38,7 +38,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, ViewProjection* vi
 
 void Player::Rotate() {
 	// Rotate Speed
-	const float kRotSpeed = 0.04f;
+	const float kRotSpeed = 0.02f;
 
 	// Bectol henkou
 	if (input_->PushKey(DIK_A)) {

@@ -59,7 +59,7 @@ void RailCamera::Update() {
 	////GetWorldRotate();
 
 	
-	const float kRotateSpeed = 0.04f;
+	const float kRotateSpeed = 0.02f;
 
 	if (target_) {
 
