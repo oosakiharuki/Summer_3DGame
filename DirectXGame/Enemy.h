@@ -52,7 +52,7 @@ private:
 	float attackTime = 1.0f;
 	bool firstAttack = true;
 
-	const float kBulletSpeed = 0.15f;
+	const float kBulletSpeed = 0.12f;
 
 	uint32_t Hp = 3;
 	bool isDead_ = false;

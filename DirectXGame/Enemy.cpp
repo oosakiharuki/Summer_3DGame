@@ -85,34 +85,35 @@ void Enemy::Update() {
 		
 			attackTime -= 1.0f / 60.0f;
 
-			Vector3 AttackVlocity = {0.0f,0.4f,0.0f};
+			Vector3 AttackVlocity = {0.2f,0.0f,0.0f};
 
 
-			worldTransform_.translation_.x += velocity.x * 2;
-			worldTransform_.translation_.y += velocity.y * 2;
-			worldTransform_.translation_.z += velocity.z * 2;
+			worldTransform_.translation_.x += velocity.x;
+			worldTransform_.translation_.y += velocity.y;
+			worldTransform_.translation_.z += velocity.z;
 
-			worldTransform_.rotation_.y += AttackVlocity.y;
+			worldTransform_.rotation_.x -= AttackVlocity.x;
 
 			if (attackTime <= 0.0f)
 			{
 				coolTimer_ = 2.0f;
 				attackTime = 1.0f;
-				//firstAttack = false;
+				firstAttack = false;
 				player_->Damage();
+				worldTransform_.rotation_.x = 0.0f;
 			}
 
 		} else {
 
 			coolTimer_ -= 1.0f / 60.0f;
 
-			worldTransform_.rotation_.y -= 0.1f;
-			//if (!firstAttack) {
+			worldTransform_.rotation_.x += 0.01f;
+			if (!firstAttack) {
 
-				worldTransform_.translation_.x -= velocity.x;
-				worldTransform_.translation_.y -= velocity.y;
-				worldTransform_.translation_.z -= velocity.z;
-			//}
+				worldTransform_.translation_.x -= velocity.x / 2;
+				worldTransform_.translation_.y -= velocity.y / 2;
+				worldTransform_.translation_.z -= velocity.z / 2;
+			}
 		}
 
 		break;

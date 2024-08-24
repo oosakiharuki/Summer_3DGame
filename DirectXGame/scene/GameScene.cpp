@@ -43,7 +43,7 @@ void GameScene::Initialize() {
 
 	//プレイヤー
 	playerModel_ = Model::CreateFromOBJ("player",true);
-	playerTextureHandle_ = TextureManager::Load("uvChecker.png");
+	playerTextureHandle_ = TextureManager::Load("player/castle.png");
 	
 	player_ = new Player();
 	//player_->SetParent(&railCamera_->GetWorldTransform());
@@ -168,7 +168,7 @@ void GameScene::CheckAllCollisions() {
 
 		float L;
 
-		L = ((plaeyrRadius + 5.0f) + EnemyRadius) * ((plaeyrRadius + 5.0f) + EnemyRadius);
+		L = ((plaeyrRadius + 10.0f) + EnemyRadius) * ((plaeyrRadius + 10.0f) + EnemyRadius);
 
 		if (distance.x + distance.y + distance.z <= L) {
 
@@ -184,7 +184,7 @@ void GameScene::CheckAllCollisions() {
 void GameScene::LoadEnemyPopData() {
 
 	std::ifstream file;
-	file.open("Resources/EnemyPop3.csv");
+	file.open("Resources/EnemyPop4.csv");
 	assert(file.is_open());
 
 	enemyPopCommands << file.rdbuf();
@@ -195,56 +195,59 @@ void GameScene::LoadEnemyPopData() {
 void GameScene::UpdateEnemyPopCommands() {
 	if (!isBornFinish) {
 
-		// if A
-		if (WaitFlag) {
-			waitTimer--;
-			if (waitTimer <= 0) {
-				WaitFlag = false;
-			}
-			return;
-		}
-
-		std::string line;
-
-		while (getline(enemyPopCommands, line)) {
-
-			std::istringstream line_stream(line);
-
-			std::string word;
-
-			getline(line_stream, word, ',');
-
-			if (word.find("//") == 0) {
-				continue;
+			// if A
+			if (WaitFlag) {
+				waitTimer--;
+				if (waitTimer <= 0) {
+					WaitFlag = false;
+				}
+				return;
 			}
 
-			if (word.find("POP") == 0) {
-				getline(line_stream, word, ',');
-				float x = (float)std::atof(word.c_str());
+			std::string line;
+
+			while (getline(enemyPopCommands, line)) {
+
+				std::istringstream line_stream(line);
+
+				std::string word;
 
 				getline(line_stream, word, ',');
-				float y = (float)std::atof(word.c_str());
 
-				getline(line_stream, word, ',');
-				float z = (float)std::atof(word.c_str());
+				if (word.find("//") == 0) {
+					continue;
+				}
+		if (!isBornStop) {
 
-				getline(line_stream, word, ',');
-				float direction = (float)std::atof(word.c_str());//向き
+				if (word.find("POP") == 0) {
+					getline(line_stream, word, ',');
+					float x = (float)std::atof(word.c_str());
 
-				EnemyBorn(Vector3(x, y, z),direction);
+					getline(line_stream, word, ',');
+					float y = (float)std::atof(word.c_str());
 
-			} else if (word.find("WAIT") == 0) {
-				getline(line_stream, word, ',');
+					getline(line_stream, word, ',');
+					float z = (float)std::atof(word.c_str());
 
-				int32_t waitTime = atoi(word.c_str());
+					getline(line_stream, word, ',');
+					float direction = (float)std::atof(word.c_str()); // 向き
 
-				WaitFlag = true;
-				waitTimer = waitTime;
+					EnemyBorn(Vector3(x, y, z), direction);
 
-				break; // 待機時間にif Aを使うため一度while文から抜ける
-			} else if (word.find("FINISH") == 0) {
-				isBornFinish = true;
-				break;
+				} else if (word.find("WAIT") == 0) {
+					getline(line_stream, word, ',');
+
+					int32_t waitTime = atoi(word.c_str());
+
+					WaitFlag = true;
+					waitTimer = waitTime;
+
+					break; // 待機時間にif Aを使うため一度while文から抜ける
+				} 
+				else if (word.find("FINISH") == 0) {
+					isBornFinish = true;//敵を生みだすのを停止する
+					break;
+				}
 			}
 		}
 	}
@@ -328,6 +331,10 @@ void GameScene::Update() {
 		break;
 	}
 	
+
+	if (isBornStop && enemies_.empty()) {
+		isBornStop = true; // ウェーブ中の全て倒した時
+	}
 
 	if (isBornFinish && enemies_.empty()) {
 		isFinishClear = true; //全て倒した時
