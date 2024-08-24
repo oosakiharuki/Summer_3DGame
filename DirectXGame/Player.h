@@ -4,6 +4,7 @@
 #include "MyMath.h"
 #include "PlayerBullet.h"
 
+#include "Sprite.h"
 #ifdef _DEBUG
 #include "imgui.h"
 #endif
@@ -21,6 +22,7 @@ public:
 	void Update();
 	
 	void Draw();
+	void DrawSprite();
 
 	void Rotate();	
 	void Attack();
@@ -59,6 +61,8 @@ private:
 
 	RailCamera* railCamera_ = nullptr;
 
-	uint32_t Hp = 3;
+	uint32_t Hp = 5;
+	uint32_t textureHandleHp[5] = {0u,0u,0u,0u,0u};
+	Sprite* sprite[5] = {nullptr, nullptr, nullptr, nullptr, nullptr};
 	bool isDead_ = false;
 };

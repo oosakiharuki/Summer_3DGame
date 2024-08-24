@@ -1,10 +1,15 @@
 #include "Player.h"
 #include <cassert>
+#include "TextureManager.h"
 #include "RailCamera.h"
 
 Player::~Player() {
 	for (PlayerBullet* bullet_ : bullets_) {
 		delete bullet_;
+	}
+
+	for (uint32_t i = 0; i < 5; i++) {
+		delete sprite[i];
 	}
 }
 
@@ -19,14 +24,21 @@ void Player::Initialize(Model* model, uint32_t textureHandle, ViewProjection* vi
 	viewProjection_ = viewProjection;
 	input_ = Input::GetInstance();
 
-
 	modelBullet_ = Model::CreateFromOBJ("bullet", true);
 	bulletDirection = {0, 0, 0};
+
+	for (uint32_t i = 0; i < 5; i++) {
+
+		textureHandleHp[i]= TextureManager::Load("hp-Icon.png");
+
+		sprite[i] = Sprite::Create(
+		    textureHandleHp[i], {10.0f + (60.0f * i), 10.0f});
+	}
 }
 
 void Player::Rotate() {
 	// Rotate Speed
-	const float kRotSpeed = 0.02f;
+	const float kRotSpeed = 0.04f;
 
 	// Bectol henkou
 	if (input_->PushKey(DIK_A)) {
@@ -70,7 +82,7 @@ Vector3 Player::GetWorldPosition() {
 }
 
 void Player::OnCollision() {
-
+	
 }
 
 //void Player::SetParent(const WorldTransform* parent) { 
@@ -149,5 +161,25 @@ void Player::Draw() {
 
 	for (PlayerBullet* bullet_ : bullets_) {
 		bullet_->Draw(*viewProjection_);
+	}
+
+}
+
+void Player::DrawSprite() {
+
+	if (Hp > 4) {
+		sprite[4]->Draw();
+	}
+	if (Hp > 3) {
+		sprite[3]->Draw();
+	}
+	if (Hp > 2) {
+		sprite[2]->Draw();
+	}
+	if (Hp > 1) {
+		sprite[1]->Draw();
+	}
+	if (Hp > 0) {
+		sprite[0]->Draw();
 	}
 }

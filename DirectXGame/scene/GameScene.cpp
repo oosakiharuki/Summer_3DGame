@@ -178,7 +178,7 @@ void GameScene::CheckAllCollisions() {
 void GameScene::LoadEnemyPopData() {
 
 	std::ifstream file;
-	file.open("Resources/EnemyPop2.csv");
+	file.open("Resources/EnemyPop3.csv");
 	assert(file.is_open());
 
 	enemyPopCommands << file.rdbuf();
@@ -406,6 +406,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	player_->DrawSprite();
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

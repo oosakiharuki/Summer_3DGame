@@ -54,5 +54,6 @@ private:
 
 	const float kBulletSpeed = 0.15f;
 
+	uint32_t Hp = 3;
 	bool isDead_ = false;
 };
