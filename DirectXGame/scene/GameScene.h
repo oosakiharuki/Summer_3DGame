@@ -13,6 +13,7 @@
 #include "Skydome.h"
 #include "RailCamera.h"
 #include "Ground.h"
+#include "Boss.h"
 
 #include "DebugCamera.h"
 
@@ -60,7 +61,8 @@ public: // メンバ関数
 		kDeath,
 	};
 
-	//void Fire();
+	void Fire();
+
 	void LoadEnemyPopData();
 	void UpdateEnemyPopCommands();
 
@@ -99,8 +101,24 @@ private: // メンバ変数
 	Vector3 enemyPosition;
 	bool WaitFlag = false;
 	int32_t waitTimer;
-	bool isBornStop = false;
 	bool isBornFinish = false;
+
+	//ボス
+	Boss* boss_ = nullptr;
+	Model* bossModel_ = nullptr;
+	Model* bossBulletModel_ = nullptr;
+	uint32_t bossTextureHandle_ = 0u;
+
+	std::list<BossBullet*> bossBullets_;
+
+
+	float bulletTimer_ = 2.0f;
+	static const int kFireTimer = 2;
+	float deltaTimer_ = 1.0f / 60.0f;
+
+
+
+
 
 
 
@@ -125,4 +143,6 @@ private: // メンバ変数
 	Phase phase_;
 	bool isFinishDead = false;
 	bool isFinishClear = false;
+
+	MyMath* myMath_ = nullptr;
 };

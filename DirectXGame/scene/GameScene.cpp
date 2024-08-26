@@ -13,6 +13,11 @@ GameScene::~GameScene() {
 	for (Enemy* enemy_ : enemies_) {
 		delete enemy_;
 	}
+
+	for (BossBullet* bullet : bossBullets_) {
+		delete bullet;
+	}
+
 	delete enemyModel_;
 
 	delete skydomeModel_;
@@ -41,6 +46,7 @@ void GameScene::Initialize() {
 	railCamera_ = new RailCamera();
 	railCamera_->Initialize();
 
+
 	//プレイヤー
 	playerModel_ = Model::CreateFromOBJ("player",true);
 	playerTextureHandle_ = TextureManager::Load("player/castle.png");
@@ -54,15 +60,20 @@ void GameScene::Initialize() {
 	railCamera_->SetTarget(&player_->GetWorldTransfrom());
 
 
+
+
 	//敵
 	enemyModel_ = Model::CreateFromOBJ("enemy",true);
 	enemyTextureHandle_ = TextureManager::Load("enemy/enemy.png");
 
-	//for (uint32_t i; i < 1; i++) {
-	//	enemy_ = new Enemy();
-	//	enemy_->Initialize(playerModel_, enemyTextureHandle_, &viewProjection_);
-	//	enemy_->SetPlayer(player_);
-	//}
+	//ボス
+	boss_ = new Boss();
+	bossModel_ = Model::CreateFromOBJ("enemy", true);
+	bossBulletModel_ = Model::CreateFromOBJ("player", true);
+	bossTextureHandle_ = TextureManager::Load("enemy/enemy.png");
+	boss_->Initialize(bossModel_,bossTextureHandle_,&viewProjection_);
+	boss_->SetPlayer(player_);
+
 
 	//スカイドーム
 	skydomeModel_ = Model::CreateFromOBJ("skydome", true);
@@ -101,34 +112,12 @@ void GameScene::CheckAllCollisions() {
 
 	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
 
-	//const std::list<EnemyBullet*>& enemyBullets = enemyBullets_;
+	const std::list<BossBullet*>& bossBullets = bossBullets_;
 
 	// case radius
 	const float plaeyrRadius = 1.0f;
 
 	const float EnemyRadius = 1.0f;
-
-	//for (EnemyBullet* bullet : enemyBullets) {
-
-	//	posA = player_->GetWorldPosition();
-	//	posB = bullet->GetWorldPosition();
-
-	//	Vector3 distance{};
-
-	//	distance.x = (posB.x - posA.x) * (posB.x - posA.x);
-	//	distance.y = (posB.y - posA.y) * (posB.y - posA.y);
-	//	distance.z = (posB.z - posA.z) * (posB.z - posA.z);
-
-	//	float L;
-
-	//	L = (plaeyrRadius + EnemyRadius) * (plaeyrRadius + EnemyRadius);
-
-	//	if (distance.x + distance.y + distance.z <= L) {
-
-	//		player_->OnCollision();
-	//		bullet->OnCollision();
-	//	}
-	//}
 
 	for (Enemy* enemy_ : enemies_) {
 		for (PlayerBullet* bullet : playerBullets) {
@@ -177,6 +166,77 @@ void GameScene::CheckAllCollisions() {
 		}
 	}
 	
+	if (isBornFinish && enemies_.empty()) {
+
+		for (PlayerBullet* bullet : playerBullets) {
+
+			posA = boss_->GetWorldPosition();
+			posB = bullet->GetWorldPosition();
+
+			Vector3 distance{};
+
+			distance.x = (posB.x - posA.x) * (posB.x - posA.x);
+			distance.y = (posB.y - posA.y) * (posB.y - posA.y);
+			distance.z = (posB.z - posA.z) * (posB.z - posA.z);
+
+			float L;
+
+			L = (plaeyrRadius + EnemyRadius * 3) * (plaeyrRadius + EnemyRadius * 3);
+
+			if (distance.x + distance.y + distance.z <= L) {
+
+				boss_->OnCollision();
+				bullet->OnCollision();
+			}
+		}
+	}
+
+	for (BossBullet* bossbullet : bossBullets) {
+
+		posA = player_->GetWorldPosition();
+		posB = bossbullet->GetWorldPosition();
+
+		Vector3 distance{};
+
+		distance.x = (posB.x - posA.x) * (posB.x - posA.x);
+		distance.y = (posB.y - posA.y) * (posB.y - posA.y);
+		distance.z = (posB.z - posA.z) * (posB.z - posA.z);
+
+		float L;
+
+		L = (plaeyrRadius + EnemyRadius * 3) * (plaeyrRadius + EnemyRadius * 3);
+
+		if (distance.x + distance.y + distance.z <= L) {
+
+			player_->Damage();
+			bossbullet->OnCollision();
+		}
+	}
+
+	for (BossBullet* bossbullet : bossBullets) {
+		for (PlayerBullet* playerbullet : playerBullets) {
+			
+			posA = bossbullet->GetWorldPosition();
+			posB = playerbullet->GetWorldPosition();
+
+			Vector3 distance{};
+
+			distance.x = (posB.x - posA.x) * (posB.x - posA.x);
+			distance.y = (posB.y - posA.y) * (posB.y - posA.y);
+			distance.z = (posB.z - posA.z) * (posB.z - posA.z);
+
+			float L;
+
+			L = (plaeyrRadius + EnemyRadius) * (plaeyrRadius + EnemyRadius);
+
+			if (distance.x + distance.y + distance.z <= L) {
+
+				playerbullet->OnCollision();
+				bossbullet->OnCollision();
+			}
+		}
+	}
+
 }
 
 //void GameScene::AddEnemyBullet(EnemyBullet* enemyBullet) { enemyBullets_.push_back(enemyBullet); }
@@ -195,59 +255,56 @@ void GameScene::LoadEnemyPopData() {
 void GameScene::UpdateEnemyPopCommands() {
 	if (!isBornFinish) {
 
-			// if A
-			if (WaitFlag) {
-				waitTimer--;
-				if (waitTimer <= 0) {
-					WaitFlag = false;
-				}
-				return;
+		// if A
+		if (WaitFlag) {
+			waitTimer--;
+			if (waitTimer <= 0) {
+				WaitFlag = false;
+			}
+			return;
+		}
+
+		std::string line;
+
+		while (getline(enemyPopCommands, line)) {
+
+			std::istringstream line_stream(line);
+
+			std::string word;
+
+			getline(line_stream, word, ',');
+
+			if (word.find("//") == 0) {
+				continue;
 			}
 
-			std::string line;
-
-			while (getline(enemyPopCommands, line)) {
-
-				std::istringstream line_stream(line);
-
-				std::string word;
+			if (word.find("POP") == 0) {
+				getline(line_stream, word, ',');
+				float x = (float)std::atof(word.c_str());
 
 				getline(line_stream, word, ',');
+				float y = (float)std::atof(word.c_str());
 
-				if (word.find("//") == 0) {
-					continue;
-				}
-		if (!isBornStop) {
+				getline(line_stream, word, ',');
+				float z = (float)std::atof(word.c_str());
 
-				if (word.find("POP") == 0) {
-					getline(line_stream, word, ',');
-					float x = (float)std::atof(word.c_str());
+				getline(line_stream, word, ',');
+				float direction = (float)std::atof(word.c_str()); // 向き
 
-					getline(line_stream, word, ',');
-					float y = (float)std::atof(word.c_str());
+				EnemyBorn(Vector3(x, y, z), direction);
 
-					getline(line_stream, word, ',');
-					float z = (float)std::atof(word.c_str());
+			} else if (word.find("WAIT") == 0) {
+				getline(line_stream, word, ',');
 
-					getline(line_stream, word, ',');
-					float direction = (float)std::atof(word.c_str()); // 向き
+				int32_t waitTime = atoi(word.c_str());
 
-					EnemyBorn(Vector3(x, y, z), direction);
+				WaitFlag = true;
+				waitTimer = waitTime;
 
-				} else if (word.find("WAIT") == 0) {
-					getline(line_stream, word, ',');
-
-					int32_t waitTime = atoi(word.c_str());
-
-					WaitFlag = true;
-					waitTimer = waitTime;
-
-					break; // 待機時間にif Aを使うため一度while文から抜ける
-				} 
-				else if (word.find("FINISH") == 0) {
-					isBornFinish = true;//敵を生みだすのを停止する
-					break;
-				}
+				break; // 待機時間にif Aを使うため一度while文から抜ける
+			} else if (word.find("FINISH") == 0) {
+				isBornFinish = true; // 敵を生みだすのを停止する
+				break;
 			}
 		}
 	}
@@ -258,6 +315,39 @@ void GameScene::UpdateEnemyPopCommands() {
 //
 //
 //}
+
+void GameScene::Fire() {
+
+	bulletTimer_ -= deltaTimer_;
+
+	if (bulletTimer_ <= 0) {
+
+		assert(player_);
+
+		const float kBulletSpeed = 0.7f;
+
+		Vector3 playerPostion = player_->GetWorldPosition();
+		Vector3 bossPostion = boss_->GetWorldPosition();
+
+		Vector3 subtract = myMath_->Subtract(playerPostion, bossPostion);
+
+		Vector3 normalize = myMath_->Normalize(subtract);
+
+		normalize.x *= kBulletSpeed;
+		normalize.y *= kBulletSpeed;
+		normalize.z *= kBulletSpeed;
+
+		Vector3 velocity(normalize);
+
+		velocity = myMath_->TransformNormal(velocity, boss_->GetWorldTransform()->matWorld_);
+
+		BossBullet* newBullet = new BossBullet();
+		newBullet->Initialize(bossBulletModel_,&viewProjection_, bossPostion, velocity);
+
+		bossBullets_.push_back(newBullet);
+		bulletTimer_ = kFireTimer;
+	}
+}
 
 
 void GameScene::Update() {
@@ -275,8 +365,10 @@ void GameScene::Update() {
 			enemy_->Update();
 		}
 		skydome_->Update();
+
 		ground_->Update();
 		railCamera_->Update();
+
 		viewProjection_.translation_ = railCamera_->GetWorldTranslation();
 		viewProjection_.rotation_ = railCamera_->GetWorldRotate();
 
@@ -285,6 +377,22 @@ void GameScene::Update() {
 			if (enemy->IsDead()) {
 
 				delete enemy;
+				return true;
+			}
+			return false;
+		});
+
+		/// bullet_ != nullptr
+		for (BossBullet* bullet_ : bossBullets_) {
+			bullet_->Update();
+		}
+
+		// delete bullet
+		/// Bullet Dead Timer
+		bossBullets_.remove_if([](BossBullet* bullet) {
+			if (bullet->IsDead()) {
+
+				delete bullet;
 				return true;
 			}
 			return false;
@@ -302,22 +410,35 @@ void GameScene::Update() {
 #endif
 
 		if (player_->IsDead()) {
-			phase_ = Phase::kDeath; //プレイヤーが倒されたとき
+			phase_ = Phase::kDeath; // プレイヤーが倒されたとき
 			isFinishDead = true;
 		}
 
+		// if (isBornStop && enemies_.empty()) {
+		//	isBornStop = true; // ウェーブ中の全て倒した時
+		// }
+
+		if (isBornFinish && enemies_.empty()) {
+			boss_->Update();
+			Fire();
+		}
+
+
+		if (boss_->IsDead()) {
+			isFinishClear = true; // 全て倒した時
+		}
 
 		break;
 	case Phase::kDeath:
 
-		//skydome_->Update();
+		// skydome_->Update();
 
-		//for (Enemy* enemy_ : enemies_) {
+		// for (Enemy* enemy_ : enemies_) {
 		//	enemy_->Update();
-		//}
-	
+		// }
+
 		//// Enemy Dead Timer
-		//enemies_.remove_if([](Enemy* enemy) {
+		// enemies_.remove_if([](Enemy* enemy) {
 		//	if (enemy->IsDead()) {
 
 		//		delete enemy;
@@ -325,23 +446,11 @@ void GameScene::Update() {
 		//		return true;
 		//	}
 		//	return false;
-		//}); 
+		//});
 		//// 当たり判定
-		//CheckAllCollisions();
+		// CheckAllCollisions();
 		break;
 	}
-	
-
-	if (isBornStop && enemies_.empty()) {
-		isBornStop = true; // ウェーブ中の全て倒した時
-	}
-
-	if (isBornFinish && enemies_.empty()) {
-		isFinishClear = true; //全て倒した時
-	}
-
-
-
 }
 
 void GameScene::Draw() {
@@ -379,6 +488,17 @@ void GameScene::Draw() {
 		for (Enemy* enemy_ : enemies_) {
 			enemy_->Draw();
 		}
+
+		if (isBornFinish && enemies_.empty()) {
+			boss_->Draw();
+		}
+
+
+		for (BossBullet* bullet_ : bossBullets_) {
+			bullet_->Draw();
+		}
+
+
 
 		// プレイヤー描画
 		player_->Draw();

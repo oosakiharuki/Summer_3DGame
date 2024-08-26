@@ -99,35 +99,35 @@ void Player::Damage() {
 void Player::Update() {
 	worldTransform_.TransferMatrix();
 
-	Vector3 move = {0, 0, 0};
-	const float kPlayerSpeed = 0.2f;
+	//Vector3 move = {0, 0, 0};
+	//const float kPlayerSpeed = 0.2f;
 
-	if (input_->PushKey(DIK_LEFT)) {
-		move.x -= kPlayerSpeed;
-	} else if (input_->PushKey(DIK_RIGHT)) {
-		move.x += kPlayerSpeed;
-	}
+	//if (input_->PushKey(DIK_LEFT)) {
+	//	move.x -= kPlayerSpeed;
+	//} else if (input_->PushKey(DIK_RIGHT)) {
+	//	move.x += kPlayerSpeed;
+	//}
 
-	if (input_->PushKey(DIK_DOWN)) {
-		move.y -= kPlayerSpeed;
-	} else if (input_->PushKey(DIK_UP)) {
-		move.y += kPlayerSpeed;
-	}
+	//if (input_->PushKey(DIK_DOWN)) {
+	//	move.y -= kPlayerSpeed;
+	//} else if (input_->PushKey(DIK_UP)) {
+	//	move.y += kPlayerSpeed;
+	//}
 
-	worldTransform_.translation_.x += move.x;
-	worldTransform_.translation_.y += move.y;
-	worldTransform_.translation_.z += move.z;
+	//worldTransform_.translation_.x += move.x;
+	//worldTransform_.translation_.y += move.y;
+	//worldTransform_.translation_.z += move.z;
 
 	worldTransform_.UpdateMatrix();
 
-	const float kMoveLimitX = 35.0f;
-	const float kMoveLimitY = 20.0f;
+	//const float kMoveLimitX = 35.0f;
+	//const float kMoveLimitY = 20.0f;
 
-	worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMoveLimitX);
-	worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
+	//worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMoveLimitX);
+	//worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
 
-	worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
-	worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
+	//worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
+	//worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
 	Rotate();
 	Attack();
