@@ -34,6 +34,10 @@ void Player::Initialize(Model* model, uint32_t textureHandle, ViewProjection* vi
 		sprite[i] = Sprite::Create(
 		    textureHandleHp[i], {10.0f + (60.0f * i), 10.0f});
 	}
+	
+	audio_ = Audio::GetInstance();
+	soundDataHandle[0] = audio_->LoadWave("bullet.mp3");
+	soundDataHandle[1] = audio_->LoadWave("damage.mp3");
 }
 
 void Player::Rotate() {
@@ -53,7 +57,7 @@ void Player::Rotate() {
 
 //bullet
 void Player::Attack() {
-	
+
 	if (input_->TriggerKey(DIK_SPACE)) {
 
 		const float kBulletSpeed = 1.0f;
@@ -68,6 +72,8 @@ void Player::Attack() {
 	
 		newBullet->Rotate(bulletDirection);
 		bullets_.push_back(newBullet);
+
+		audio_->PlayWave(soundDataHandle[0], false, 0.08f);
 	}
 }
 
@@ -91,6 +97,7 @@ void Player::OnCollision() {
 
 void Player::Damage() { 
 	Hp--;
+	audio_->PlayWave(soundDataHandle[1], false, 0.6f);
 	if (Hp == 0) {
 		isDead_ = true;
 	}

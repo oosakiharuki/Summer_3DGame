@@ -3,6 +3,7 @@
 #include "TextureManager.h"
 #include "MyMath.h"
 #include "BossBullet.h"
+#include "Audio.h"
 
 class Player;
 
@@ -41,7 +42,10 @@ private:
 	Model* modelBullet_ = nullptr;
 
 
-
 	Player* player_ = nullptr;
 	MyMath* myMath_ = nullptr;
+
+
+	Audio* audio_ = nullptr;
+	uint32_t soundDataHandle[2] = {};// 0 hit 1 K.O
 };

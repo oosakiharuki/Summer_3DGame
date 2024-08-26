@@ -20,6 +20,8 @@ void Enemy::Initialize(Model* model, uint32_t textureHandle, ViewProjection* vie
 
 	viewProjection_ = viewProjection;
 
+	audio_ = Audio::GetInstance();
+	soundDataHandle_ = audio_->LoadWave("hit.mp3");
 }
 
 Vector3 Enemy::GetWorldPosition() { 
@@ -34,6 +36,7 @@ Vector3 Enemy::GetWorldPosition() {
 
 void Enemy::OnCollision() { 
 	Hp--;
+	audio_->PlayWave(soundDataHandle_,false,0.5f);
 	if (Hp <= 0) {
 		isDead_ = true;
 	}
@@ -66,17 +69,9 @@ void Enemy::Update() {
 
 		assert(player_);
 
-		//velocity = myMath_->TransformNormal(velocity, worldTransform_.matWorld_);
-
 		worldTransform_.translation_.x += velocity.x;
 		worldTransform_.translation_.y += velocity.y;
 		worldTransform_.translation_.z += velocity.z;
-
-		//EnemyBullet* newBullet = new EnemyBullet();
-		//newBullet->Initialize(model_, worldTransform_.translation_, velocity);
-
-		//bullets_.push_back(newBullet);
-		//bulletTimer_ = 1.0f;
 
 		break;
 	case Phase::Fight:

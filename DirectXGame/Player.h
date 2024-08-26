@@ -10,6 +10,7 @@
 #endif
 
 #include <list>
+#include "Audio.h"
 
 class RailCamera;
 
@@ -65,4 +66,8 @@ private:
 	uint32_t textureHandleHp[5] = {0u,0u,0u,0u,0u};
 	Sprite* sprite[5] = {nullptr, nullptr, nullptr, nullptr, nullptr};
 	bool isDead_ = false;
+
+	
+	Audio* audio_ = nullptr;
+	uint32_t soundDataHandle[2] = {};
 };

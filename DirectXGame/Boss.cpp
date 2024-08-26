@@ -16,12 +16,20 @@ void Boss::Initialize(Model* model, uint32_t textureHandle, ViewProjection* view
 	c = {0, 0, 0};
 
 	modelBullet_ = Model::CreateFromOBJ("bullet", true);
+
+	audio_ = Audio::GetInstance();
+	soundDataHandle[0] = audio_->LoadWave("hit.mp3");
+	soundDataHandle[1] = audio_->LoadWave("K.O.mp3");
+
 }
 
 void Boss::OnCollision() {
 	Hp--;
 	if (Hp <= 0) {
+		audio_->PlayWave(soundDataHandle[1], false, 0.8f);
 		isDead_ = true;
+	} else {
+		audio_->PlayWave(soundDataHandle[0],false,0.5f);
 	}
 }
 

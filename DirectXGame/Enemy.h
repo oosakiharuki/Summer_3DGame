@@ -2,6 +2,7 @@
 #include "WorldTransform.h"
 #include "TextureManager.h"
 #include "MyMath.h"
+#include "Audio.h"
 
 class Player;
 class GameScene;
@@ -56,4 +57,7 @@ private:
 
 	uint32_t Hp = 3;
 	bool isDead_ = false;
+
+	Audio* audio_ = nullptr;
+	uint32_t soundDataHandle_ = 0;
 };
