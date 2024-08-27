@@ -36,7 +36,7 @@ Vector3 Enemy::GetWorldPosition() {
 
 void Enemy::OnCollision() { 
 	Hp--;
-	audio_->PlayWave(soundDataHandle_,false,0.5f);
+	audio_->PlayWave(soundDataHandle_,false,0.3f);
 	if (Hp <= 0) {
 		isDead_ = true;
 	}

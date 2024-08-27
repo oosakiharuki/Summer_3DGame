@@ -97,7 +97,7 @@ void Player::OnCollision() {
 
 void Player::Damage() { 
 	Hp--;
-	audio_->PlayWave(soundDataHandle[1], false, 0.6f);
+	audio_->PlayWave(soundDataHandle[1], false, 0.2f);
 	if (Hp == 0) {
 		isDead_ = true;
 	}

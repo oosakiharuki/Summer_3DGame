@@ -25,6 +25,8 @@ GameScene::~GameScene() {
 
 	delete railCamera_;
 
+	delete deathparticle_;
+
 	delete debugCamera_;
 }
 
@@ -33,7 +35,8 @@ void GameScene::Initialize() {
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
-
+	
+	soundDateHandle_ = audio_->LoadWave("BGM.mp3");
 	
 	phase_ = Phase::kPlay;
 	isFinishDead = false;
@@ -59,7 +62,9 @@ void GameScene::Initialize() {
 
 	railCamera_->SetTarget(&player_->GetWorldTransfrom());
 
-
+	//パーテイクル
+	deathparticle_ = new DeathParticle();
+	deathparticle_->Initialize(&viewProjection_, player_->GetWorldPosition());
 
 
 	//敵
@@ -69,7 +74,7 @@ void GameScene::Initialize() {
 	//ボス
 	boss_ = new Boss();
 	bossModel_ = Model::CreateFromOBJ("enemy", true);
-	bossBulletModel_ = Model::CreateFromOBJ("player", true);
+	bossBulletModel_ = Model::CreateFromOBJ("bullet", true);
 	bossTextureHandle_ = TextureManager::Load("enemy/enemy.png");
 	boss_->Initialize(bossModel_,bossTextureHandle_,&viewProjection_);
 	boss_->SetPlayer(player_);
@@ -324,7 +329,7 @@ void GameScene::Fire() {
 
 		assert(player_);
 
-		const float kBulletSpeed = 0.7f;
+		const float kBulletSpeed = 0.5f;
 
 		Vector3 playerPostion = player_->GetWorldPosition();
 		Vector3 bossPostion = boss_->GetWorldPosition();
@@ -411,26 +416,36 @@ void GameScene::Update() {
 
 		if (player_->IsDead()) {
 			phase_ = Phase::kDeath; // プレイヤーが倒されたとき
-			isFinishDead = true;
 		}
 
 		// if (isBornStop && enemies_.empty()) {
 		//	isBornStop = true; // ウェーブ中の全て倒した時
 		// }
 
-		if (isBornFinish && enemies_.empty()) {
+		if (isBornFinish && enemies_.empty()) { // 全て倒した時
 			boss_->Update();
 			Fire();
 		}
 
-
 		if (boss_->IsDead()) {
-			isFinishClear = true; // 全て倒した時
+			isFinishClear = true; // ボスを倒したとき
+		}
+
+		if (audio_->IsPlaying(voiceHandle_) == 0 || voiceHandle_ == -1) {
+			voiceHandle_ = audio_->PlayWave(soundDateHandle_, false, 0.05f);
 		}
 
 		break;
 	case Phase::kDeath:
 
+		
+		deathparticle_->Updata();
+
+		if (deathparticle_->IsDead()) {		
+			isFinishDead = true;
+		} else {
+			audio_->StopWave(voiceHandle_);
+		}
 		// skydome_->Update();
 
 		// for (Enemy* enemy_ : enemies_) {
@@ -515,6 +530,8 @@ void GameScene::Draw() {
 
 		break;
 	case Phase::kDeath:
+
+		deathparticle_->Draw();
 		skydome_->Draw(viewProjection_);
 
 		// プレイヤー描画
@@ -522,6 +539,9 @@ void GameScene::Draw() {
 
 		for (Enemy* enemy_ : enemies_) {
 			enemy_->Draw();
+		}
+		if (isBornFinish && enemies_.empty()) {
+			boss_->Draw();
 		}
 
 		viewProjection_.UpdateMatrix();

@@ -64,7 +64,8 @@ Matrix4x4 MyMath::Multiply(Matrix4x4 m1, Matrix4x4 m2) {
 	                 m1.m[3][3] * m2.m[3][3];
 	return result;
 }
-Matrix4x4 MyMath::MakeAffineMatrix(Vector3 scale_, Vector3 rotate_, Vector3 translate_) {
+
+Matrix4x4 MyMath::MakeRotateX(float rotate_) {
 
 	Matrix4x4 resultX{};
 
@@ -73,45 +74,55 @@ Matrix4x4 MyMath::MakeAffineMatrix(Vector3 scale_, Vector3 rotate_, Vector3 tran
 	resultX.m[0][2] = 0.0f;
 	resultX.m[0][3] = 0.0f;
 	resultX.m[1][0] = 0.0f;
-	resultX.m[1][1] = std::cos(rotate_.x);
-	resultX.m[1][2] = std::sin(rotate_.x);
+	resultX.m[1][1] = std::cos(rotate_);
+	resultX.m[1][2] = std::sin(rotate_);
 	resultX.m[1][3] = 0.0f;
 	resultX.m[2][0] = 0.0f;
-	resultX.m[2][1] = -(std::sin(rotate_.x));
-	resultX.m[2][2] = std::cos(rotate_.x);
+	resultX.m[2][1] = -(std::sin(rotate_));
+	resultX.m[2][2] = std::cos(rotate_);
 	resultX.m[2][3] = 0.0f;
 	resultX.m[3][0] = 0.0f;
 	resultX.m[3][1] = 0.0f;
 	resultX.m[3][2] = 0.0f;
 	resultX.m[3][3] = 1.0f;
 
+	return resultX;
+}
+
+Matrix4x4 MyMath::MakeRotateY(float rotate_) {
+
 	Matrix4x4 resultY{};
 
-	resultY.m[0][0] = std::cos(rotate_.y);
+	resultY.m[0][0] = std::cos(rotate_);
 	resultY.m[0][1] = 0.0f;
-	resultY.m[0][2] = -(std::sin(rotate_.y));
+	resultY.m[0][2] = -(std::sin(rotate_));
 	resultY.m[0][3] = 0.0f;
 	resultY.m[1][0] = 0.0f;
 	resultY.m[1][1] = 1.0f;
 	resultY.m[1][2] = 0.0f;
 	resultY.m[1][3] = 0.0f;
-	resultY.m[2][0] = std::sin(rotate_.y);
+	resultY.m[2][0] = std::sin(rotate_);
 	resultY.m[2][1] = 0.0f;
-	resultY.m[2][2] = std::cos(rotate_.y);
+	resultY.m[2][2] = std::cos(rotate_);
 	resultY.m[2][3] = 0.0f;
 	resultY.m[3][0] = 0.0f;
 	resultY.m[3][1] = 0.0f;
 	resultY.m[3][2] = 0.0f;
 	resultY.m[3][3] = 1.0f;
 
+	return resultY;
+}
+
+Matrix4x4 MyMath::MakeRotateZ(float rotate_) {
+
 	Matrix4x4 resultZ{};
 
-	resultZ.m[0][0] = std::cos(rotate_.z);
-	resultZ.m[0][1] = std::sin(rotate_.z);
+	resultZ.m[0][0] = std::cos(rotate_);
+	resultZ.m[0][1] = std::sin(rotate_);
 	resultZ.m[0][2] = 0.0f;
 	resultZ.m[0][3] = 0.0f;
-	resultZ.m[1][0] = -(std::sin(rotate_.z));
-	resultZ.m[1][1] = std::cos(rotate_.z);
+	resultZ.m[1][0] = -(std::sin(rotate_));
+	resultZ.m[1][1] = std::cos(rotate_);
 	resultZ.m[1][2] = 0.0f;
 	resultZ.m[1][3] = 0.0f;
 	resultZ.m[2][0] = 0.0f;
@@ -122,6 +133,15 @@ Matrix4x4 MyMath::MakeAffineMatrix(Vector3 scale_, Vector3 rotate_, Vector3 tran
 	resultZ.m[3][1] = 0.0f;
 	resultZ.m[3][2] = 0.0f;
 	resultZ.m[3][3] = 1.0f;
+
+	return resultZ;
+}
+
+Matrix4x4 MyMath::MakeAffineMatrix(Vector3 scale_, Vector3 rotate_, Vector3 translate_) {
+
+	Matrix4x4 resultX = MakeRotateX(rotate_.x);
+	Matrix4x4 resultY = MakeRotateY(rotate_.y);
+	Matrix4x4 resultZ = MakeRotateZ(rotate_.z);
 
 	Matrix4x4 rotateXYZ_ = Multiply(resultX, Multiply(resultY, resultZ));
 

@@ -14,6 +14,7 @@
 #include "RailCamera.h"
 #include "Ground.h"
 #include "Boss.h"
+#include "DeathParticle.h" 
 
 #include "DebugCamera.h"
 
@@ -119,9 +120,6 @@ private: // メンバ変数
 
 
 
-
-
-
 	//デバッグカメラ
 	DebugCamera* debugCamera_ = nullptr;
 	bool isDebugCameraActive_ = false;
@@ -143,6 +141,14 @@ private: // メンバ変数
 	Phase phase_;
 	bool isFinishDead = false;
 	bool isFinishClear = false;
+
+	//BGM
+	uint32_t soundDateHandle_ = 0;
+	uint32_t voiceHandle_ = 0;
+
+	//パーテイクル
+	DeathParticle* deathparticle_ = nullptr;
+
 
 	MyMath* myMath_ = nullptr;
 };
