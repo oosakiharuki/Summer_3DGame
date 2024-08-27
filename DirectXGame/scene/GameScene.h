@@ -15,6 +15,7 @@
 #include "Ground.h"
 #include "Boss.h"
 #include "DeathParticle.h" 
+#include "Fade.h"
 
 #include "DebugCamera.h"
 
@@ -58,10 +59,13 @@ public: // メンバ関数
 	//void AddEnemyBullet(EnemyBullet* enemyBullet);
 
 	enum class Phase {
+		kFadeIn,
 		kPlay,
 		kDeath,
+		kFadeOutD,
+		kFadeOutC,
 	};
-
+	void ChangeScene();
 	void Fire();
 
 	void LoadEnemyPopData();
@@ -141,6 +145,7 @@ private: // メンバ変数
 	Phase phase_;
 	bool isFinishDead = false;
 	bool isFinishClear = false;
+	Fade* fade_ = nullptr;
 
 	//BGM
 	uint32_t soundDateHandle_ = 0;

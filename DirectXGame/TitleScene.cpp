@@ -1,7 +1,12 @@
 #include "TitleScene.h"
+#include "Fade.h"
 #include "TextureManager.h"
 #include "DirectXCommon.h"
 #include <cassert>
+
+TitleScene::~TitleScene() { 
+	delete fade_;
+}
 
 void TitleScene::Initialize() { 
 	assert(modelTitle_);
@@ -10,14 +15,37 @@ void TitleScene::Initialize() {
 	modelTitle_ = Model::CreateFromOBJ("Title", true);
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
+
+	fade_ = new Fade();
+	fade_->Intialize();
+	fade_->Start(Fade::Status::FadeIn, 1);
 }
 
 void TitleScene::Updata() {
-	worldTransform_.TransferMatrix(); 
-	if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
-		finished_ = true;
+
+	switch (phase_) {
+	case Phase::kFadeIn:
+		if (fade_->IsFinished()) {
+			phase_ = Phase::kMain;
+		}
+		break;
+	case Phase::kMain:
+		fade_->Stop();
+		worldTransform_.TransferMatrix();
+		if (Input::GetInstance()->TriggerKey(DIK_SPACE)) {
+			fade_->Start(Fade::Status::FadeOut, 1);
+			phase_ = Phase::kFadeOut;
+		}
+		break;
+	case Phase::kFadeOut:
+
+		if (fade_->IsFinished()) {
+			finished_ = true;
+		}
+		break;
 	}
 
+	fade_->Update();
 }
 
 void TitleScene::Draw() {
@@ -27,4 +55,6 @@ void TitleScene::Draw() {
 
 	Model::PreDraw(commandList);
 	modelTitle_->Draw(worldTransform_,viewProjection_); //koko ga okashii 
+	
+	fade_->Draw(commandList);
 }

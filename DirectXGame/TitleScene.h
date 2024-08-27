@@ -6,8 +6,18 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 
+class Fade;
+
 class TitleScene {
 public:
+
+	enum class Phase {
+		kFadeIn,
+		kMain,
+		kFadeOut,
+	};
+
+	~TitleScene();
 	void Initialize();
 	void Updata();
 	void Draw();
@@ -24,5 +34,6 @@ private:
 
 	bool finished_ = false;
 
-
+	Fade* fade_ = nullptr;
+	Phase phase_ = Phase::kFadeIn;
 };

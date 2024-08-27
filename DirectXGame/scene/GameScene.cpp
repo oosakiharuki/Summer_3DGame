@@ -37,11 +37,6 @@ void GameScene::Initialize() {
 	audio_ = Audio::GetInstance();
 	
 	soundDateHandle_ = audio_->LoadWave("BGM.mp3");
-	
-	phase_ = Phase::kPlay;
-	isFinishDead = false;
-	isFinishClear = false;
-	isBornFinish = false;
 
 	viewProjection_.Initialize();
 
@@ -91,6 +86,15 @@ void GameScene::Initialize() {
 	groundTextureHandle_ = TextureManager::Load("ground/ground.png");
 	ground_ = new Ground();
 	ground_->Initialize(groundModel_, groundTextureHandle_, &viewProjection_);
+	
+	
+	phase_ = Phase::kFadeIn;
+	fade_ = new Fade();
+	fade_->Intialize();
+	fade_->Start(Fade::Status::FadeIn, 1);
+	isFinishDead = false;
+	isFinishClear = false;
+	isBornFinish = false;
 
 
 	//デバッグカメラ
@@ -354,10 +358,56 @@ void GameScene::Fire() {
 	}
 }
 
+void GameScene::ChangeScene() {
+	switch (phase_) {
+	case Phase::kFadeIn:
+			phase_ = Phase::kPlay;
+
+		break;
+	case Phase::kPlay:
+		if (player_->IsDead()) {
+			phase_ = Phase::kDeath; // プレイヤーが倒されたとき	
+		}
+		if (boss_->IsDead()) {
+			phase_ = Phase::kFadeOutC; // ボスを倒したとき
+			fade_->Start(Fade::Status::FadeOut, 1);
+		}
+		break;
+	case Phase::kDeath:
+		if (deathparticle_->IsDead()) {
+			phase_ = Phase::kFadeOutD;
+			fade_->Start(Fade::Status::FadeOut, 1);
+		} else {
+			audio_->StopWave(voiceHandle_);
+		}
+
+		break;
+	case Phase::kFadeOutD:
+
+		if (fade_->IsFinished()) {
+			isFinishDead = true;
+		}
+		break;
+	case Phase::kFadeOutC:
+
+		if (fade_->IsFinished()) {
+			isFinishClear = true;
+		} else {
+			audio_->StopWave(voiceHandle_);
+		}
+		break;
+	}
+	
+}
+
 
 void GameScene::Update() {
 
+	ChangeScene();
+
 	switch (phase_) {
+	case Phase::kFadeIn:
+		break;
 	case Phase::kPlay:
 
 		// プレイヤー更新
@@ -414,9 +464,7 @@ void GameScene::Update() {
 		}
 #endif
 
-		if (player_->IsDead()) {
-			phase_ = Phase::kDeath; // プレイヤーが倒されたとき
-		}
+
 
 		// if (isBornStop && enemies_.empty()) {
 		//	isBornStop = true; // ウェーブ中の全て倒した時
@@ -427,9 +475,7 @@ void GameScene::Update() {
 			Fire();
 		}
 
-		if (boss_->IsDead()) {
-			isFinishClear = true; // ボスを倒したとき
-		}
+
 
 		if (audio_->IsPlaying(voiceHandle_) == 0 || voiceHandle_ == -1) {
 			voiceHandle_ = audio_->PlayWave(soundDateHandle_, false, 0.05f);
@@ -441,11 +487,7 @@ void GameScene::Update() {
 		
 		deathparticle_->Updata();
 
-		if (deathparticle_->IsDead()) {		
-			isFinishDead = true;
-		} else {
-			audio_->StopWave(voiceHandle_);
-		}
+
 		// skydome_->Update();
 
 		// for (Enemy* enemy_ : enemies_) {
@@ -465,7 +507,12 @@ void GameScene::Update() {
 		//// 当たり判定
 		// CheckAllCollisions();
 		break;
+	case Phase::kFadeOutD:
+		break;
+	case Phase::kFadeOutC:
+		break;
 	}
+fade_->Update();
 }
 
 void GameScene::Draw() {
@@ -496,6 +543,8 @@ void GameScene::Draw() {
 	/// </summary>
 
 	switch (phase_) {
+	case Phase::kFadeIn:
+		break;
 	case Phase::kPlay:
 
 		skydome_->Draw(viewProjection_);
@@ -549,8 +598,28 @@ void GameScene::Draw() {
 		ground_->Draw();
 
 		break;
-	}
+	case Phase::kFadeOutD:
+		
+	case Phase::kFadeOutC:
+		deathparticle_->Draw();
+		skydome_->Draw(viewProjection_);
 
+		// プレイヤー描画
+		// player_->Draw();
+
+		for (Enemy* enemy_ : enemies_) {
+			enemy_->Draw();
+		}
+		if (isBornFinish && enemies_.empty()) {
+			boss_->Draw();
+		}
+
+		viewProjection_.UpdateMatrix();
+
+		ground_->Draw();
+
+	}
+	fade_->Draw(commandList);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

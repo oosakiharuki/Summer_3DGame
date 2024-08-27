@@ -19,7 +19,7 @@ private:
 	
 	static inline const uint32_t kNumParticles = 4;
 
-	static inline const float kDeleteTimer = 5.0f;
+	static inline const float kDeleteTimer = 3.0f;
 	static inline const float kParticleSpeed = 0.25f;
 	static inline const float kAngle = (2.0f * 3.14f) / 4;
 
