@@ -73,6 +73,15 @@ void Enemy::Update() {
 		worldTransform_.translation_.y += velocity.y;
 		worldTransform_.translation_.z += velocity.z;
 
+		deltaTimer_ += 1.0f / 60.0f;
+
+		angle = 2.0f * 3.14f;	
+	
+		param = std::sin(angle * deltaTimer_ / kTime);
+		radian = kWideStart + kWideEnd * (param + 1.0f) / 2.0f;
+
+		worldTransform_.rotation_.x = std::sin(radian);
+
 		break;
 	case Phase::Fight:
 

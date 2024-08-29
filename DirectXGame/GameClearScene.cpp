@@ -8,7 +8,9 @@ void GameClearScene::Initialize() {
 	assert(modelTitle_);
 
 	//textureHandle_ = TextureManager::Load("uvChecker.png");
-	modelTitle_ = Model::CreateFromOBJ("GameClear", true);
+	modelMoji_ = Model::CreateFromOBJ("GameClear", true);
+	modelSky_ = Model::CreateFromOBJ("skydome", true);
+	modelGround_ = Model::CreateFromOBJ("ground", true);
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
 
@@ -27,6 +29,8 @@ void GameClearScene::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 	Model::PreDraw(commandList);
-	modelTitle_->Draw(worldTransform_, viewProjection_); // koko ga okashii
+	modelMoji_->Draw(worldTransform_, viewProjection_);
+	modelSky_->Draw(worldTransform_, viewProjection_);
+	modelGround_->Draw(worldTransform_, viewProjection_);
 
 }

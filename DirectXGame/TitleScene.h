@@ -25,8 +25,13 @@ public:
 
 private:
 	Model* modelTitle_ = nullptr;
+	Model* modelSky_ = nullptr;
+	Model* modelGround_ = nullptr;
+	Model* modelplayer_ = nullptr;
 
 	WorldTransform worldTransform_;
+	WorldTransform worldTransform2_;
+	WorldTransform worldTransform3_;
 
 	//uint32_t textureHandle_ = 0u;
 
@@ -36,4 +41,12 @@ private:
 
 	Fade* fade_ = nullptr;
 	Phase phase_ = Phase::kFadeIn;
+
+
+	float deltaTimer_;
+	static inline float kWideStart = 1.0f;
+	static inline float kWideEnd = -1.0f;
+	static inline float kTime = 4.0f;
+	    
+
 };

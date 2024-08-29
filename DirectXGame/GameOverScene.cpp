@@ -7,7 +7,9 @@ void GameOverScene::Initialize() {
 	assert(modelTitle_);
 
 	// textureHandle_ = TextureManager::Load("Title/Title.png");
-	modelTitle_ = Model::CreateFromOBJ("GameOver", true);
+	modelMoji_ = Model::CreateFromOBJ("GameOver", true);
+	modelSky_ = Model::CreateFromOBJ("skydome", true);
+	modelGround_ = Model::CreateFromOBJ("ground", true);
 	worldTransform_.Initialize();
 	viewProjection_.Initialize();
 }
@@ -25,5 +27,8 @@ void GameOverScene::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 	Model::PreDraw(commandList);
-	modelTitle_->Draw(worldTransform_, viewProjection_); // koko ga okashii
+	modelMoji_->Draw(worldTransform_, viewProjection_);
+	modelSky_->Draw(worldTransform_, viewProjection_);
+	modelGround_->Draw(worldTransform_, viewProjection_);
+
 }

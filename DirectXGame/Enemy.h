@@ -48,6 +48,15 @@ private:
 	Phase phace_ = Phase::move;
 
 
+	float deltaTimer_;
+	static inline float kWideStart = 1.0f;
+	static inline float kWideEnd = -2.0f;
+	static inline float kTime = 2.0f;
+	float angle;
+
+	float param;
+	float radian;
+
 
 	float coolTimer_ = 2.0f;
 	float attackTime = 1.0f;

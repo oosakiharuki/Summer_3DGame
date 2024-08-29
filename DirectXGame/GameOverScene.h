@@ -14,7 +14,9 @@ public:
 	bool IsFinished() const { return finished_; }
 
 private:
-	Model* modelTitle_ = nullptr;
+	Model* modelMoji_ = nullptr;
+	Model* modelSky_ = nullptr;
+	Model* modelGround_ = nullptr;
 
 	WorldTransform worldTransform_;
 
