@@ -66,7 +66,7 @@ private:
 	Sprite* sprite[5] = {nullptr, nullptr, nullptr, nullptr, nullptr};
 	bool isDead_ = false;
 
-	
+
 	Audio* audio_ = nullptr;
 	uint32_t soundDataHandle[2] = {};
 };

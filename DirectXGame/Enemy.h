@@ -3,7 +3,6 @@
 #include "TextureManager.h"
 #include "MyMath.h"
 #include "Audio.h"
-//#include "HitParticle.h"
 
 class Player;
 class GameScene;
@@ -32,6 +31,7 @@ public:
 	Vector3 GetTransration() { return worldTransform_.translation_; } 
 
 	bool IsDead() const { return isDead_; }
+	bool IsDamage() const { return isDamageParticle_; }
 
 private:
 
@@ -72,5 +72,5 @@ private:
 	Audio* audio_ = nullptr;
 	uint32_t soundDataHandle_ = 0;
 
-	//std::list<HitParticle*> hitparticles_;
+	bool isDamageParticle_ = false;
 };

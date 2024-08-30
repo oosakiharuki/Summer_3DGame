@@ -103,6 +103,7 @@ void Enemy::Update() {
 				coolTimer_ = 2.0f;
 				attackTime = 1.0f;
 				firstAttack = false;
+				isDamageParticle_ = true;
 				player_->Damage();
 				worldTransform_.rotation_.x = 0.0f;
 			}
@@ -118,6 +119,7 @@ void Enemy::Update() {
 				worldTransform_.translation_.y -= velocity.y / 2;
 				worldTransform_.translation_.z -= velocity.z / 2;
 			}
+			isDamageParticle_ = false;
 		}
 
 		break;

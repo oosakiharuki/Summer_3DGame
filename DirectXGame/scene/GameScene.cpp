@@ -181,7 +181,7 @@ void GameScene::CheckAllCollisions() {
 		L = ((plaeyrRadius + 10.0f) + EnemyRadius) * ((plaeyrRadius + 10.0f) + EnemyRadius);
 
 		if (distance.x + distance.y + distance.z <= L) {
-
+			
 			enemy->OnStartFight(); // ここ　phaceで攻撃に変える
 		}
 	}
@@ -231,6 +231,7 @@ void GameScene::CheckAllCollisions() {
 
 			player_->Damage();
 			bossbullet->OnCollision();
+			ParticleBorn(player_->GetWorldPosition());
 		}
 	}
 
@@ -430,7 +431,10 @@ void GameScene::Update() {
 
 		for (Enemy* enemy_ : enemies_) {
 			enemy_->Update();
-	
+
+			if (enemy_->IsDamage()) {
+				ParticleBorn(player_->GetWorldPosition());
+			}
 		}	
 
 		for (HitParticle* hitparticle_ : hitparticles_) {
