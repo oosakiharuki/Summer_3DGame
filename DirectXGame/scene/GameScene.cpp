@@ -71,9 +71,9 @@ void GameScene::Initialize() {
 
 	//ボス
 	boss_ = new Boss();
-	bossModel_ = Model::CreateFromOBJ("enemy", true);
+	bossModel_ = Model::CreateFromOBJ("boss", true);
 	bossBulletModel_ = Model::CreateFromOBJ("bullet", true);
-	bossTextureHandle_ = TextureManager::Load("enemy/enemy.png");
+	bossTextureHandle_ = TextureManager::Load("boss/boss.png");
 	boss_->Initialize(bossModel_,bossTextureHandle_,&viewProjection_);
 	boss_->SetPlayer(player_);
 
@@ -266,7 +266,7 @@ void GameScene::CheckAllCollisions() {
 void GameScene::LoadEnemyPopData() {
 
 	std::ifstream file;
-	file.open("Resources/EnemyPop4.csv");
+	file.open("Resources/EnemyPop.csv");
 	assert(file.is_open());
 
 	enemyPopCommands << file.rdbuf();
@@ -340,7 +340,11 @@ void GameScene::UpdateEnemyPopCommands() {
 
 void GameScene::Fire() {
 
-	bulletTimer_ -= deltaTimer_;
+	if (boss_->isFire()) {
+		bulletTimer_ -= deltaTimer_ * 10.0f;
+	} else {
+		bulletTimer_ -= deltaTimer_;
+	}
 
 	if (bulletTimer_ <= 0) {
 
@@ -361,7 +365,7 @@ void GameScene::Fire() {
 
 		Vector3 velocity(normalize);
 
-		velocity = myMath_->TransformNormal(velocity, boss_->GetWorldTransform()->matWorld_);
+		//velocity = myMath_->TransformNormal(velocity, boss_->GetWorldTransform()->matWorld_);
 
 		BossBullet* newBullet = new BossBullet();
 		newBullet->Initialize(bossBulletModel_,&viewProjection_, bossPostion, velocity);
@@ -517,29 +521,9 @@ void GameScene::Update() {
 		
 		break;
 	case Phase::kDeath:
-
-		
+	
 		deathparticle_->Updata();
 
-
-		// skydome_->Update();
-
-		// for (Enemy* enemy_ : enemies_) {
-		//	enemy_->Update();
-		// }
-
-		//// Enemy Dead Timer
-		// enemies_.remove_if([](Enemy* enemy) {
-		//	if (enemy->IsDead()) {
-
-		//		delete enemy;
-		//		enemy = nullptr;
-		//		return true;
-		//	}
-		//	return false;
-		//});
-		//// 当たり判定
-		// CheckAllCollisions();
 		break;
 	case Phase::kFadeOutD:
 		break;
@@ -575,6 +559,8 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
+		
+	viewProjection_.UpdateMatrix();
 
 	switch (phase_) {
 	case Phase::kFadeIn:
@@ -584,8 +570,9 @@ void GameScene::Draw() {
 		skydome_->Draw(viewProjection_);
 
 		for (Enemy* enemy_ : enemies_) {
-			enemy_->Draw();			
+			enemy_->Draw();
 		}
+
 		for (HitParticle* hitparticle_ : hitparticles_) {
 			hitparticle_->Draw();
 		}
@@ -594,12 +581,9 @@ void GameScene::Draw() {
 			boss_->Draw();
 		}
 
-
 		for (BossBullet* bullet_ : bossBullets_) {
 			bullet_->Draw();
 		}
-
-
 
 		// プレイヤー描画
 		player_->Draw();
@@ -608,36 +592,13 @@ void GameScene::Draw() {
 			viewProjection_.matView = debugCamera_->GetViewProjection().matView;
 			viewProjection_.matProjection = debugCamera_->GetViewProjection().matProjection;
 			viewProjection_.TransferMatrix();
-		} else {
-			viewProjection_.UpdateMatrix();
 		}
-
-		ground_->Draw();
-		
-		break;
-	case Phase::kDeath:
-
-		deathparticle_->Draw();		
-		skydome_->Draw(viewProjection_);
-
-		// プレイヤー描画
-		//player_->Draw();
-
-		for (Enemy* enemy_ : enemies_) {
-			enemy_->Draw();
-		}
-		if (isBornFinish && enemies_.empty()) {
-			boss_->Draw();
-		}
-
-		viewProjection_.UpdateMatrix();
 
 		ground_->Draw();
 
 		break;
-	case Phase::kFadeOutD:
-		
-	case Phase::kFadeOutC:
+	case Phase::kDeath:
+
 		deathparticle_->Draw();
 		skydome_->Draw(viewProjection_);
 
@@ -651,7 +612,29 @@ void GameScene::Draw() {
 			boss_->Draw();
 		}
 
-		viewProjection_.UpdateMatrix();
+		ground_->Draw();
+
+		break;
+	case Phase::kFadeOutD:
+
+		deathparticle_->Draw();
+		skydome_->Draw(viewProjection_);
+
+		for (Enemy* enemy_ : enemies_) {
+			enemy_->Draw();
+		}
+		if (isBornFinish && enemies_.empty()) {
+			boss_->Draw();
+		}
+
+		ground_->Draw();
+		break;
+	case Phase::kFadeOutC:
+
+		skydome_->Draw(viewProjection_);
+
+		// プレイヤー描画
+		player_->Draw();
 
 		ground_->Draw();
 		break;

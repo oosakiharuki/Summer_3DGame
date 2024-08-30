@@ -63,7 +63,9 @@ private:
 
 	uint32_t Hp = 5;
 	uint32_t textureHandleHp[5] = {0u,0u,0u,0u,0u};
+	uint32_t textureHandleSETUMEI = 0u;
 	Sprite* sprite[5] = {nullptr, nullptr, nullptr, nullptr, nullptr};
+	Sprite* spriteS = nullptr;
 	bool isDead_ = false;
 
 

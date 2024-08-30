@@ -1,5 +1,6 @@
 #include "Boss.h"
 #include <cassert>
+#include <numbers>
 
 #include "Player.h"
 
@@ -11,7 +12,7 @@ void Boss::Initialize(Model* model, uint32_t textureHandle, ViewProjection* view
 	textureHandle_ = textureHandle;
 	viewProjection_ = viewProjection;
 
-	worldTransform_.translation_ = {0, 100, 0};
+	worldTransform_.translation_ = {0, 0, 0};
 	p = {0, 0, 0};
 	c = {0, 0, 0};
 
@@ -47,21 +48,90 @@ Vector3 Boss::GetWorldPosition() {
 
 void Boss::Update() {
 	worldTransform_.TransferMatrix();
-	worldTransform_.UpdateMatrix();
+	worldTransform_.UpdateMatrix();	
 
-	worldTransform_.scale_.x = 3.0f;
-	worldTransform_.scale_.y = 3.0f;
-	worldTransform_.scale_.z = 3.0f;
+	switch (action_) {
+	case Action::RotateR:
+		changeAction -= 1.0f / 60.0f;
 
-	angle += 3.14f / 600.0f;
+		angle += 3.14f / 600.0f;
 
-	p.x = c.x + std::cos(angle) * r;
-	p.y = c.y;
-	p.z = c.z + std::sin(angle) * r;
+		p.x = c.x + std::cos(angle) * r;
+		p.y = c.y;
+		p.z = c.z + std::sin(angle) * r;
 
-	worldTransform_.translation_.x = p.x;
-	worldTransform_.translation_.y = p.y;
-	worldTransform_.translation_.z = p.z;
+		worldTransform_.translation_.x = p.x;
+		worldTransform_.translation_.y = p.y;
+		worldTransform_.translation_.z = p.z;
+	
+		worldTransform_.rotation_.y -= 3.14f / 600.0f;
+
+		if (changeAction < 0) {
+			action_ = Action::FireLevel;
+			changeAction = kMaxTime;
+		} 
+
+
+
+		break;
+	case Action::RotateL:
+		changeAction -= 1.0f / 60.0f;
+
+		angle -= 3.14f / 600.0f;
+
+		p.x = c.x + std::cos(angle) * r;
+		p.y = c.y;
+		p.z = c.z + std::sin(angle) * r;
+
+		worldTransform_.translation_.x = p.x;
+		worldTransform_.translation_.y = p.y;
+		worldTransform_.translation_.z = p.z;
+
+		worldTransform_.rotation_.y += 3.14f / 600.0f;
+
+		if (changeAction < 0) {
+			action_ = Action::FireLevel;
+			changeAction = kMaxTime;
+		}
+		
+		break;
+	case Action::FireLevel:
+		
+		if (!isFireStart) {
+			worldTransform_.scale_.y += 0.02f;
+			worldTransform_.scale_.x -= 0.02f;
+
+			if (worldTransform_.scale_.y > 3.0f) {
+				isFireStart = true;
+			}
+		} else {
+			worldTransform_.scale_.y = 1.0f;
+			worldTransform_.scale_.x = 1.0f;		
+		}
+
+		if (isFireStart) {
+			isFirePower = true;
+			changeAction -= 1.0f / 60.0f;
+		} else {
+			isFirePower = false;
+		}
+
+
+		if (changeAction < kMaxTime - 5.0f) {
+			if (flont) {
+				action_ = Action::RotateR;
+				flont = false; 
+			} else {
+				action_ = Action::RotateL;
+				flont = true;
+			}
+			changeAction = kMaxTime;
+			isFireStart = false;	
+			isFirePower = false;
+		}
+
+		break;
+	}
 
 }
 

@@ -11,6 +11,7 @@ Player::~Player() {
 	for (uint32_t i = 0; i < 5; i++) {
 		delete sprite[i];
 	}
+	delete spriteS;
 }
 
 void Player::Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection) {
@@ -34,7 +35,9 @@ void Player::Initialize(Model* model, uint32_t textureHandle, ViewProjection* vi
 		sprite[i] = Sprite::Create(
 		    textureHandleHp[i], {10.0f + (60.0f * i), 10.0f});
 	}
-	
+	textureHandleSETUMEI = TextureManager::Load("HUD-sousa.png");
+	spriteS = Sprite::Create(textureHandleSETUMEI, {1142.0f, 562});
+
 	audio_ = Audio::GetInstance();
 	soundDataHandle[0] = audio_->LoadWave("bullet.mp3");
 	soundDataHandle[1] = audio_->LoadWave("damage.mp3");
@@ -68,8 +71,6 @@ void Player::Attack() {
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(modelBullet_, worldTransform_.translation_, velocity);
 
-		//newBullet->SetParent(&railCamera->GetWorldTransform());
-	
 		newBullet->Rotate(bulletDirection);
 		bullets_.push_back(newBullet);
 
@@ -88,9 +89,6 @@ Vector3 Player::GetWorldPosition() {
 }
 
 
-//void Player::SetParent(const WorldTransform* parent) { 
-//	worldTransform_.parent_ = parent; 
-//}
 
 void Player::Damage() { 
 	Hp--;
@@ -103,35 +101,7 @@ void Player::Damage() {
 void Player::Update() {
 	worldTransform_.TransferMatrix();
 
-	//Vector3 move = {0, 0, 0};
-	//const float kPlayerSpeed = 0.2f;
-
-	//if (input_->PushKey(DIK_LEFT)) {
-	//	move.x -= kPlayerSpeed;
-	//} else if (input_->PushKey(DIK_RIGHT)) {
-	//	move.x += kPlayerSpeed;
-	//}
-
-	//if (input_->PushKey(DIK_DOWN)) {
-	//	move.y -= kPlayerSpeed;
-	//} else if (input_->PushKey(DIK_UP)) {
-	//	move.y += kPlayerSpeed;
-	//}
-
-	//worldTransform_.translation_.x += move.x;
-	//worldTransform_.translation_.y += move.y;
-	//worldTransform_.translation_.z += move.z;
-
 	worldTransform_.UpdateMatrix();
-
-	//const float kMoveLimitX = 35.0f;
-	//const float kMoveLimitY = 20.0f;
-
-	//worldTransform_.translation_.x = max(worldTransform_.translation_.x, -kMoveLimitX);
-	//worldTransform_.translation_.x = min(worldTransform_.translation_.x, +kMoveLimitX);
-
-	//worldTransform_.translation_.y = max(worldTransform_.translation_.y, -kMoveLimitY);
-	//worldTransform_.translation_.y = min(worldTransform_.translation_.y, +kMoveLimitY);
 
 	Rotate();
 	Attack();
@@ -186,4 +156,6 @@ void Player::DrawSprite() {
 	if (Hp > 0) {
 		sprite[0]->Draw();
 	}
+
+	spriteS->Draw();
 }

@@ -10,6 +10,13 @@ class Player;
 class Boss{
 public:
 
+	enum class Action {
+		RotateR,
+		RotateL,
+		FireLevel,
+	};
+
+
 	void Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection);
 	void Update();
 	void Draw();
@@ -22,6 +29,7 @@ public:
 	Vector3 GetTransration() { return worldTransform_.translation_; } 
 
 	bool IsDead() { return isDead_; }
+	bool isFire() { return isFirePower; }
 
 private:
 	Model* model_ = nullptr;
@@ -29,13 +37,20 @@ private:
 	WorldTransform worldTransform_;
 	ViewProjection* viewProjection_ = nullptr;
 
+	Action action_ = Action::RotateR;
+	static inline float kMaxTime = 20.0f;
+	float changeAction = kMaxTime;
+
+	bool isFireStart = false;
+	bool isFirePower = false;
+	bool flont = false;
 
 	float angle = 0.0f;
 	float r = 70.0f;
 	Vector3 p;
 	Vector3 c;
 
-	uint32_t Hp = 50;
+	uint32_t Hp = 100;
 	bool isDead_ = false;
 
 	BossBullet* bossBullet_ = nullptr;
