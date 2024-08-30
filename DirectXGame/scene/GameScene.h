@@ -16,6 +16,7 @@
 #include "Boss.h"
 #include "DeathParticle.h" 
 #include "Fade.h"
+#include "HitParticle.h"
 
 #include "DebugCamera.h"
 
@@ -53,6 +54,7 @@ public: // メンバ関数
 	void Draw();
 
 	void EnemyBorn(Vector3 position, float direction);
+	void ParticleBorn(Vector3 position);
 
 	void CheckAllCollisions();
 
@@ -103,7 +105,6 @@ private: // メンバ変数
 	uint32_t enemyTextureHandle_ = 0u;
 	
 	std::stringstream enemyPopCommands;
-	Vector3 enemyPosition;
 	bool WaitFlag = false;
 	int32_t waitTimer;
 	bool isBornFinish = false;
@@ -153,7 +154,7 @@ private: // メンバ変数
 
 	//パーテイクル
 	DeathParticle* deathparticle_ = nullptr;
-
+	std::list<HitParticle*> hitparticles_;
 
 	MyMath* myMath_ = nullptr;
 };

@@ -19,6 +19,7 @@ public:
 		
 	const WorldTransform* GetWorldTransform() const { return &worldTransform_; }
 	void SetPlayer(Player* player) { player_ = player; }
+	Vector3 GetTransration() { return worldTransform_.translation_; } 
 
 	bool IsDead() { return isDead_; }
 

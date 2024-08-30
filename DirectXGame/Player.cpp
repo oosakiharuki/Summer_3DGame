@@ -87,9 +87,6 @@ Vector3 Player::GetWorldPosition() {
 	return worldPos;
 }
 
-void Player::OnCollision() {
-	
-}
 
 //void Player::SetParent(const WorldTransform* parent) { 
 //	worldTransform_.parent_ = parent; 
@@ -100,7 +97,7 @@ void Player::Damage() {
 	audio_->PlayWave(soundDataHandle[1], false, 0.2f);
 	if (Hp == 0) {
 		isDead_ = true;
-	}
+	} 
 }
 
 void Player::Update() {

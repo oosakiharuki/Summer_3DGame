@@ -9,7 +9,7 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete playerModel_;
 	delete player_;
-	
+
 	for (Enemy* enemy_ : enemies_) {
 		delete enemy_;
 	}
@@ -26,7 +26,10 @@ GameScene::~GameScene() {
 	delete railCamera_;
 
 	delete deathparticle_;
-
+	
+	for (HitParticle* hitparticle_ : hitparticles_) {
+		delete hitparticle_;
+	}	
 	delete debugCamera_;
 }
 
@@ -60,7 +63,7 @@ void GameScene::Initialize() {
 	//パーテイクル
 	deathparticle_ = new DeathParticle();
 	deathparticle_->Initialize(&viewProjection_, player_->GetWorldPosition());
-
+	
 
 	//敵
 	enemyModel_ = Model::CreateFromOBJ("enemy",true);
@@ -112,9 +115,17 @@ void GameScene::EnemyBorn(Vector3 position, float direction) {
 	enemy_->SetGameScene(this);
 
 	enemy_->SetPlayer(player_);
-	enemies_.push_back(enemy_);
+	enemies_.push_back(enemy_);	
+
 }
 
+void GameScene::ParticleBorn(Vector3 position) {
+	// 当たった時のパーテイクル
+	HitParticle* hitparticle_ = new HitParticle();
+	hitparticle_->Initialize(&viewProjection_, position);
+
+	hitparticles_.push_back(hitparticle_);
+}
 
 void GameScene::CheckAllCollisions() {
 	Vector3 posA, posB;
@@ -147,7 +158,8 @@ void GameScene::CheckAllCollisions() {
 			if (distance.x + distance.y + distance.z <= L) {
 
 				enemy_->OnCollision();
-				bullet->OnCollision();
+				bullet->OnCollision();	
+				ParticleBorn(enemy_->GetTransration());
 			}
 		}
 	}
@@ -170,7 +182,6 @@ void GameScene::CheckAllCollisions() {
 
 		if (distance.x + distance.y + distance.z <= L) {
 
-			player_->OnCollision();
 			enemy->OnStartFight(); // ここ　phaceで攻撃に変える
 		}
 	}
@@ -196,6 +207,7 @@ void GameScene::CheckAllCollisions() {
 
 				boss_->OnCollision();
 				bullet->OnCollision();
+				ParticleBorn(boss_->GetTransration());
 			}
 		}
 	}
@@ -404,7 +416,7 @@ void GameScene::ChangeScene() {
 void GameScene::Update() {
 
 	ChangeScene();
-
+	
 	switch (phase_) {
 	case Phase::kFadeIn:
 		break;
@@ -418,7 +430,15 @@ void GameScene::Update() {
 
 		for (Enemy* enemy_ : enemies_) {
 			enemy_->Update();
+	
+		}	
+
+		for (HitParticle* hitparticle_ : hitparticles_) {
+			hitparticle_->Update();
 		}
+		
+
+
 		skydome_->Update();
 
 		ground_->Update();
@@ -453,6 +473,16 @@ void GameScene::Update() {
 			return false;
 		});
 
+
+		hitparticles_.remove_if([](HitParticle* hitparticle) {
+			if (hitparticle->IsDead()) {
+
+				delete hitparticle;
+				return true;
+			}
+			return false;
+		});
+
 		// 当たり判定
 		CheckAllCollisions();
 
@@ -480,7 +510,7 @@ void GameScene::Update() {
 		if (audio_->IsPlaying(voiceHandle_) == 0 || voiceHandle_ == -1) {
 			voiceHandle_ = audio_->PlayWave(soundDateHandle_, false, 0.05f);
 		}
-
+		
 		break;
 	case Phase::kDeath:
 
@@ -550,7 +580,10 @@ void GameScene::Draw() {
 		skydome_->Draw(viewProjection_);
 
 		for (Enemy* enemy_ : enemies_) {
-			enemy_->Draw();
+			enemy_->Draw();			
+		}
+		for (HitParticle* hitparticle_ : hitparticles_) {
+			hitparticle_->Draw();
 		}
 
 		if (isBornFinish && enemies_.empty()) {
@@ -576,11 +609,11 @@ void GameScene::Draw() {
 		}
 
 		ground_->Draw();
-
+		
 		break;
 	case Phase::kDeath:
 
-		deathparticle_->Draw();
+		deathparticle_->Draw();		
 		skydome_->Draw(viewProjection_);
 
 		// プレイヤー描画
@@ -617,7 +650,7 @@ void GameScene::Draw() {
 		viewProjection_.UpdateMatrix();
 
 		ground_->Draw();
-
+		break;
 	}
 	fade_->Draw(commandList);
 

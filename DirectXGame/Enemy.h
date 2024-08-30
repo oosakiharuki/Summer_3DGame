@@ -3,12 +3,14 @@
 #include "TextureManager.h"
 #include "MyMath.h"
 #include "Audio.h"
+//#include "HitParticle.h"
 
 class Player;
 class GameScene;
 
 class Enemy {
 public:
+	//~Enemy();
 
 	enum class Phase {
 		move,
@@ -27,7 +29,7 @@ public:
 	void OnCollision();
 	void OnStartFight();
 	void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
-
+	Vector3 GetTransration() { return worldTransform_.translation_; } 
 
 	bool IsDead() const { return isDead_; }
 
@@ -69,4 +71,6 @@ private:
 
 	Audio* audio_ = nullptr;
 	uint32_t soundDataHandle_ = 0;
+
+	//std::list<HitParticle*> hitparticles_;
 };
