@@ -2,7 +2,7 @@
 
 void DeathParticle::Initialize(ViewProjection* viewProjection, const Vector3& position) { 
 
-	model_ = Model::CreateFromOBJ("bullet",true);
+	model_ = Model::CreateFromOBJ("particle",true);
 	viewProjection_ = viewProjection;
 
 	for (auto& worldTransform : worldTransform_) {
@@ -38,9 +38,13 @@ void DeathParticle::Updata() {
 		worldTransform_[i].translation_.y += velocity.y;
 		worldTransform_[i].translation_.z += velocity.z;
 
-		worldTransform_[i].rotation_.x += 0.5f;
-		worldTransform_[i].rotation_.y += 0.5f;
-		worldTransform_[i].rotation_.z += 0.5f;
+		if (worldTransform_[i].scale_.x > 0 || worldTransform_[i].scale_.y > 0 ||
+		    worldTransform_[i].scale_.z > 0) {
+
+			worldTransform_[i].scale_.x -= kParticleScale_;
+			worldTransform_[i].scale_.y -= kParticleScale_;
+			worldTransform_[i].scale_.z -= kParticleScale_;
+		}
 	}
 
 	if (isFinish_) {

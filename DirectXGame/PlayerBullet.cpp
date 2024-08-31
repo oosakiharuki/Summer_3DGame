@@ -8,7 +8,7 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 
 	model_ = model;
 
-	textureHandle_ = TextureManager::Load("bullet/bullet.png");
+	textureHandle_ = TextureManager::Load("playerBullet.png");
 	worldTransform_.Initialize();
 
 	worldTransform_.translation_ = position;

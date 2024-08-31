@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
+#include "Sprite.h"
 
 class Fade;
 
@@ -33,7 +34,9 @@ private:
 	WorldTransform worldTransform2_;
 	WorldTransform worldTransform3_;
 
-	//uint32_t textureHandle_ = 0u;
+	uint32_t textureHandle_ = 0u;
+	Sprite* sprite_ = nullptr;
+
 
 	ViewProjection viewProjection_;
 

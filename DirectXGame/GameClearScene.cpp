@@ -7,8 +7,9 @@ void GameClearScene::Initialize() {
 
 	assert(modelTitle_);
 
-	//textureHandle_ = TextureManager::Load("uvChecker.png");
-	modelMoji_ = Model::CreateFromOBJ("GameClear", true);
+	textureHandle_ = TextureManager::Load("GameClearTexture.png");
+	sprite_ = Sprite::Create(textureHandle_, {0, 0});
+
 	modelSky_ = Model::CreateFromOBJ("skydome", true);
 	modelGround_ = Model::CreateFromOBJ("ground", true);
 	worldTransform_.Initialize();
@@ -29,8 +30,10 @@ void GameClearScene::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 	Model::PreDraw(commandList);
-	modelMoji_->Draw(worldTransform_, viewProjection_);
 	modelSky_->Draw(worldTransform_, viewProjection_);
 	modelGround_->Draw(worldTransform_, viewProjection_);
 
+	Sprite::PreDraw(commandList);
+	sprite_->Draw();
+	Sprite::PostDraw();
 }

@@ -14,7 +14,9 @@ TitleScene::~TitleScene() {
 void TitleScene::Initialize() { 
 	assert(modelTitle_);
 
-	//textureHandle_ = TextureManager::Load("Title/Title.png");
+	textureHandle_ = TextureManager::Load("title-start.png");
+	sprite_ = Sprite::Create(textureHandle_, {0, 0});
+
 	modelTitle_ = Model::CreateFromOBJ("Title", true);
 	modelSky_ = Model::CreateFromOBJ("skydome", true);
 	modelGround_ = Model::CreateFromOBJ("ground", true);
@@ -81,10 +83,21 @@ void TitleScene::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 	Model::PreDraw(commandList);
+	
 	modelTitle_->Draw(worldTransform2_,viewProjection_);
 	modelSky_->Draw(worldTransform_, viewProjection_);
 	modelGround_->Draw(worldTransform_, viewProjection_);
 	modelplayer_->Draw(worldTransform3_, viewProjection_);
 
+	Model::PostDraw();
+
+
+	Sprite::PreDraw(commandList);
+
+	sprite_->Draw();
 	fade_->Draw(commandList);
+
+	Sprite::PostDraw();
+
+
 }

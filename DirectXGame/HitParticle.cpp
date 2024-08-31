@@ -1,14 +1,16 @@
 #include "HitParticle.h"
 
-void HitParticle::Initialize(ViewProjection* viewProjection, const Vector3& position) {
+void HitParticle::Initialize(ViewProjection* viewProjection, const Vector3& position,uint32_t textureHandele) {
 
-	model_ = Model::CreateFromOBJ("bullet", true);
+	model_ = Model::CreateFromOBJ("particle", true);
 	viewProjection_ = viewProjection;
 	
 	for (auto& worldTransform : worldTransform_) {
 		worldTransform.Initialize();
 		worldTransform.translation_ = position;
 	}
+
+	textureHandle_ = textureHandele;
 }
 
 
@@ -26,23 +28,23 @@ void HitParticle::Update() {
 		isFinish_ = true;
 	}
 
-		for (uint32_t i = 0; i < 4; i++) {
+	for (uint32_t i = 0; i < 4; i++) {
 
-			Vector3 velocity = {kParticleSpeed, kParticleSpeed, kParticleSpeed};
-			float angle = kAngle * i;
+		Vector3 velocity = {kParticleSpeed, kParticleSpeed, kParticleSpeed};
+		float angle = kAngle * i;
 
-			Matrix4x4 matrixRotation_ = myMath_->MakeRotateY(angle);
+		Matrix4x4 matrixRotation_ = myMath_->MakeRotateY(angle);
 
-			velocity = myMath_->TransformNormal(velocity, matrixRotation_);
+		velocity = myMath_->TransformNormal(velocity, matrixRotation_);
 
-			worldTransform_[i].translation_.x += velocity.x;
-			worldTransform_[i].translation_.y += velocity.y;
-			worldTransform_[i].translation_.z += velocity.z;
+		worldTransform_[i].translation_.x += velocity.x;
+		worldTransform_[i].translation_.y += velocity.y;
+		worldTransform_[i].translation_.z += velocity.z;
 
-			worldTransform_[i].scale_.x -= kParticleScale_;
-			worldTransform_[i].scale_.y -= kParticleScale_;
-			worldTransform_[i].scale_.z -= kParticleScale_;
-		}
+		worldTransform_[i].scale_.x -= kParticleScale_;
+		worldTransform_[i].scale_.y -= kParticleScale_;
+		worldTransform_[i].scale_.z -= kParticleScale_;
+	}
 	
 
 	if (isFinish_) {
@@ -52,7 +54,7 @@ void HitParticle::Update() {
 
 void HitParticle::Draw() {
 	for (auto& worldTransform : worldTransform_) {
-		model_->Draw(worldTransform, *viewProjection_);
+		model_->Draw(worldTransform, *viewProjection_,textureHandle_);
 	}
 	if (isFinish_) {
 		return;

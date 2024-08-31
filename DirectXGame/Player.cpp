@@ -36,7 +36,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, ViewProjection* vi
 		    textureHandleHp[i], {10.0f + (60.0f * i), 10.0f});
 	}
 	textureHandleSETUMEI = TextureManager::Load("HUD-sousa.png");
-	spriteS = Sprite::Create(textureHandleSETUMEI, {1142.0f, 562});
+	spriteS = Sprite::Create(textureHandleSETUMEI, {1142.0f, 10.0f});
 
 	audio_ = Audio::GetInstance();
 	soundDataHandle[0] = audio_->LoadWave("bullet.mp3");

@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "ViewProjection.h"
 #include "WorldTransform.h"
+#include "Sprite.h"
 
 class GameOverScene {
 public:
@@ -14,15 +15,14 @@ public:
 	bool IsFinished() const { return finished_; }
 
 private:
-	Model* modelMoji_ = nullptr;
 	Model* modelSky_ = nullptr;
 	Model* modelGround_ = nullptr;
 
 	WorldTransform worldTransform_;
-
-	// uint32_t textureHandle_ = 0u;
-
 	ViewProjection viewProjection_;
 
 	bool finished_ = false;
+
+	uint32_t textureHandle_ = 0u;
+	Sprite* sprite_ = nullptr;
 };

@@ -7,7 +7,7 @@
 
 class HitParticle {
 public:
-	void Initialize(ViewProjection* viewProjection, const Vector3& position);
+	void Initialize(ViewProjection* viewProjection, const Vector3& position, uint32_t textureHandele);
 	void Update();
 	void Draw();
 
@@ -31,6 +31,8 @@ private:
 	std::array<WorldTransform, kNumParticles> worldTransform_;
 
 	ViewProjection* viewProjection_;
+
+	uint32_t textureHandle_ = 0u;
 
 	MyMath* myMath_ = nullptr;
 };

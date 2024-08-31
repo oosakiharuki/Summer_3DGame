@@ -21,6 +21,7 @@ private:
 
 	static inline const float kDeleteTimer = 3.0f;
 	static inline const float kParticleSpeed = 0.25f;
+	static inline const float kParticleScale_ = 0.015f; 
 	static inline const float kAngle = (2.0f * 3.14f) / 4;
 
 	bool isFinish_ = false;

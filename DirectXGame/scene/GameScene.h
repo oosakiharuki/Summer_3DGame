@@ -54,7 +54,7 @@ public: // メンバ関数
 	void Draw();
 
 	void EnemyBorn(Vector3 position, float direction);
-	void ParticleBorn(Vector3 position);
+	void ParticleBorn(Vector3 position, uint32_t particle_);
 
 	void CheckAllCollisions();
 
@@ -96,6 +96,7 @@ private: // メンバ変数
 	Player* player_ = nullptr;
 	Model* playerModel_ = nullptr;
 	uint32_t playerTextureHandle_ = 0u;
+	uint32_t playerParticle_ = 0u;
 
 	//敵
 	//Enemy* enemy_ = nullptr;
@@ -103,7 +104,13 @@ private: // メンバ変数
 
 	Model* enemyModel_ = nullptr;
 	uint32_t enemyTextureHandle_ = 0u;
+	uint32_t enemyParticle_ = 0u;
 	
+	Sprite* warningSprite_ = nullptr;
+	uint32_t warningTexture_ = 0u;
+	float warningTimer = 2.0f;
+	bool bossBorn = false;
+
 	std::stringstream enemyPopCommands;
 	bool WaitFlag = false;
 	int32_t waitTimer;

@@ -51,7 +51,7 @@ void GameScene::Initialize() {
 	//プレイヤー
 	playerModel_ = Model::CreateFromOBJ("player",true);
 	playerTextureHandle_ = TextureManager::Load("player/castle.png");
-	
+
 	player_ = new Player();
 	//player_->SetParent(&railCamera_->GetWorldTransform());
 
@@ -63,7 +63,9 @@ void GameScene::Initialize() {
 	//パーテイクル
 	deathparticle_ = new DeathParticle();
 	deathparticle_->Initialize(&viewProjection_, player_->GetWorldPosition());
-	
+	playerParticle_ = TextureManager::Load("ParticlePlayer.png"); 
+	enemyParticle_ = TextureManager::Load("ParticleEnemy.png"); 
+
 
 	//敵
 	enemyModel_ = Model::CreateFromOBJ("enemy",true);
@@ -77,6 +79,10 @@ void GameScene::Initialize() {
 	boss_->Initialize(bossModel_,bossTextureHandle_,&viewProjection_);
 	boss_->SetPlayer(player_);
 
+
+	warningTexture_ = TextureManager::Load("warning.png");
+	warningSprite_ = Sprite::Create(warningTexture_, {0, 0});
+	isBornFinish = false;
 
 	//スカイドーム
 	skydomeModel_ = Model::CreateFromOBJ("skydome", true);
@@ -119,10 +125,10 @@ void GameScene::EnemyBorn(Vector3 position, float direction) {
 
 }
 
-void GameScene::ParticleBorn(Vector3 position) {
+void GameScene::ParticleBorn(Vector3 position, uint32_t particle_) {
 	// 当たった時のパーテイクル
 	HitParticle* hitparticle_ = new HitParticle();
-	hitparticle_->Initialize(&viewProjection_, position);
+	hitparticle_->Initialize(&viewProjection_, position,particle_);
 
 	hitparticles_.push_back(hitparticle_);
 }
@@ -159,7 +165,7 @@ void GameScene::CheckAllCollisions() {
 
 				enemy_->OnCollision();
 				bullet->OnCollision();	
-				ParticleBorn(enemy_->GetTransration());
+				ParticleBorn(enemy_->GetTransration(),enemyParticle_);
 			}
 		}
 	}
@@ -186,7 +192,7 @@ void GameScene::CheckAllCollisions() {
 		}
 	}
 	
-	if (isBornFinish && enemies_.empty()) {
+	if (bossBorn) {
 
 		for (PlayerBullet* bullet : playerBullets) {
 
@@ -207,7 +213,7 @@ void GameScene::CheckAllCollisions() {
 
 				boss_->OnCollision();
 				bullet->OnCollision();
-				ParticleBorn(boss_->GetTransration());
+				ParticleBorn(boss_->GetTransration(),enemyParticle_);
 			}
 		}
 	}
@@ -231,7 +237,7 @@ void GameScene::CheckAllCollisions() {
 
 			player_->Damage();
 			bossbullet->OnCollision();
-			ParticleBorn(player_->GetWorldPosition());
+			ParticleBorn(player_->GetWorldPosition(),playerParticle_);
 		}
 	}
 
@@ -437,7 +443,7 @@ void GameScene::Update() {
 			enemy_->Update();
 
 			if (enemy_->IsDamage()) {
-				ParticleBorn(player_->GetWorldPosition());
+				ParticleBorn(player_->GetWorldPosition(),playerParticle_);
 			}
 		}	
 
@@ -508,11 +514,17 @@ void GameScene::Update() {
 		//	isBornStop = true; // ウェーブ中の全て倒した時
 		// }
 
-		if (isBornFinish && enemies_.empty()) { // 全て倒した時
+		if (isBornFinish && enemies_.empty() && !bossBorn) { // 全て倒した時
+			warningTimer -= 1.0f / 60.0f;
+			if (warningTimer < 0) {
+				bossBorn = true;
+			}
+		}
+
+		if (bossBorn) {
 			boss_->Update();
 			Fire();
 		}
-
 
 
 		if (audio_->IsPlaying(voiceHandle_) == 0 || voiceHandle_ == -1) {
@@ -577,7 +589,7 @@ void GameScene::Draw() {
 			hitparticle_->Draw();
 		}
 
-		if (isBornFinish && enemies_.empty()) {
+		if (bossBorn) {
 			boss_->Draw();
 		}
 
@@ -639,7 +651,7 @@ void GameScene::Draw() {
 		ground_->Draw();
 		break;
 	}
-	fade_->Draw(commandList);
+
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
@@ -652,8 +664,13 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-
+	if (isBornFinish && enemies_.empty() && !bossBorn) {
+		warningSprite_->Draw();
+	}
 	player_->DrawSprite();
+
+
+	fade_->Draw(commandList);
 
 	// スプライト描画後処理
 	Sprite::PostDraw();

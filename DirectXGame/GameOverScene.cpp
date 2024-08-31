@@ -6,8 +6,9 @@
 void GameOverScene::Initialize() {
 	assert(modelTitle_);
 
-	// textureHandle_ = TextureManager::Load("Title/Title.png");
-	modelMoji_ = Model::CreateFromOBJ("GameOver", true);
+	textureHandle_ = TextureManager::Load("GameOverTexture.png");
+	sprite_ = Sprite::Create(textureHandle_, {0, 0});
+
 	modelSky_ = Model::CreateFromOBJ("skydome", true);
 	modelGround_ = Model::CreateFromOBJ("ground", true);
 	worldTransform_.Initialize();
@@ -27,8 +28,12 @@ void GameOverScene::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
 	Model::PreDraw(commandList);
-	modelMoji_->Draw(worldTransform_, viewProjection_);
 	modelSky_->Draw(worldTransform_, viewProjection_);
 	modelGround_->Draw(worldTransform_, viewProjection_);
 
+	Sprite::PreDraw(commandList);
+
+	sprite_->Draw();
+
+	Sprite::PostDraw();
 }
