@@ -4,6 +4,7 @@
 #include "MyMath.h"
 #include "BossBullet.h"
 #include "Audio.h"
+#include "Sprite.h"
 
 class Player;
 
@@ -20,6 +21,8 @@ public:
 	void Initialize(Model* model, uint32_t textureHandle, ViewProjection* viewProjection);
 	void Update();
 	void Draw();
+	void DrawSprite();
+
 	void OnCollision();
 	Vector3 GetWorldPosition();
 
@@ -50,12 +53,15 @@ private:
 	Vector3 p;
 	Vector3 c;
 
-	uint32_t Hp = 100;
+	uint32_t Hp = 70;
 	bool isDead_ = false;
 
 	BossBullet* bossBullet_ = nullptr;
 	std::list<BossBullet*> bullets_;
 	Model* modelBullet_ = nullptr;
+
+	uint32_t textureHandleHp[7] = {0u, 0u, 0u, 0u, 0u, 0u, 0u};
+	Sprite* sprite[7] = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
 
 
 	Player* player_ = nullptr;

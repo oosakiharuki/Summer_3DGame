@@ -667,6 +667,11 @@ void GameScene::Draw() {
 	if (isBornFinish && enemies_.empty() && !bossBorn) {
 		warningSprite_->Draw();
 	}
+
+	if (bossBorn) {
+		boss_->DrawSprite();
+	}
+
 	player_->DrawSprite();
 
 

@@ -18,6 +18,13 @@ void Boss::Initialize(Model* model, uint32_t textureHandle, ViewProjection* view
 
 	modelBullet_ = Model::CreateFromOBJ("bullet", true);
 
+	for (uint32_t i = 0; i < 7; i++) {
+
+		textureHandleHp[i] = TextureManager::Load("bossHp-Icon.png");
+
+		sprite[i] = Sprite::Create(textureHandleHp[i], {400.0f + (60.0f * i), 10.0f});
+	}
+
 	audio_ = Audio::GetInstance();
 	soundDataHandle[0] = audio_->LoadWave("hit.mp3");
 	soundDataHandle[1] = audio_->LoadWave("K.O.mp3");
@@ -139,4 +146,30 @@ void Boss::Draw() {
 
 	model_->Draw(worldTransform_, *viewProjection_, textureHandle_);
 
+}
+
+
+void Boss::DrawSprite() {
+
+	if (Hp > 60) {
+		sprite[6]->Draw();
+	}
+	if (Hp > 50) {
+		sprite[5]->Draw();
+	}
+	if (Hp > 40) {
+		sprite[4]->Draw();
+	}
+	if (Hp > 30) {
+		sprite[3]->Draw();
+	}
+	if (Hp > 20) {
+		sprite[2]->Draw();
+	}
+	if (Hp > 10) {
+		sprite[1]->Draw();
+	}
+	if (Hp > 0) {
+		sprite[0]->Draw();
+	}
 }

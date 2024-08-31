@@ -33,7 +33,7 @@ void Player::Initialize(Model* model, uint32_t textureHandle, ViewProjection* vi
 		textureHandleHp[i]= TextureManager::Load("hp-Icon.png");
 
 		sprite[i] = Sprite::Create(
-		    textureHandleHp[i], {10.0f + (60.0f * i), 10.0f});
+		    textureHandleHp[i], {10.0f, 10.0f + (60.0f * i)});
 	}
 	textureHandleSETUMEI = TextureManager::Load("HUD-sousa.png");
 	spriteS = Sprite::Create(textureHandleSETUMEI, {1142.0f, 10.0f});
